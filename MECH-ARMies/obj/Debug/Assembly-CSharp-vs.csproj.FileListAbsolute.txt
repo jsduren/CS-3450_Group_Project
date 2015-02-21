@@ -1,0 +1,12 @@
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\Assembly-CSharp.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\Assembly-CSharp.pdb
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\UnityEditor.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\UnityEngine.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\nunit.framework.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\obj\Debug\Assembly-CSharp.dll
+C:\Users\colton.parry\Documents\CS_3540_Gaming\CS-3540_Group_Project\MECH-ARMies\obj\Debug\Assembly-CSharp.pdb
