@@ -4,8 +4,8 @@ using System.Collections;
 
 public class MainBaseAttributes : MonoBehaviour {
 
-	public bool setTeam;		// True = Team 1  False = Team 2
-	public bool currentTeam; 	// True = Team 1  False = Team 2
+	public string setTeam;		// Player1 or Player2
+	public string currentTeam; 	// True = Team 1  False = Team 2
 
 	// Use this for initialization
 	void Start () {

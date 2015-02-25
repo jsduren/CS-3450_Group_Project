@@ -1,14 +1,22 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Colton\PlayerController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+<<<<<<< HEAD
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Stephen\DestroyByContact.cs">
     <Files>
+      <File FileName="Assets\Scripts\Stephen\enemyAIscript.cs" Line="30" Column="69" />
+      <File FileName="Assets\TurretRotationTowardEnemy.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\Stephen\DestroyByContact.cs" Line="7" Column="22" />
+      <File FileName="Assets\Scripts\Colton\PlayerController.cs" Line="20" Column="26" />
+=======
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Josh\GameController.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Josh\Base Scripts\MainBaseAttributes.cs" Line="23" Column="3" />
       <File FileName="Assets\Scripts\Josh\Player\PlayerAttributes.cs" Line="40" Column="2" />
-      <File FileName="Assets\Scripts\Josh\Base Scripts\MainBaseAttributes.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Josh\GameController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Josh\GameController.cs" Line="12" Column="31" />
       <File FileName="Assets\Terrain\Josh\Water (Basic)\Sources\Scripts\WaterSimple.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Josh\Base Scripts\MainBaseHealth.cs" Line="24" Column="44" />
-      <File FileName="Temp\GeneratedFromSurface-MiniMapShader.shader" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Josh\Base Scripts\MainBaseHealth.cs" Line="29" Column="42" />
       <File FileName="Assets\Scripts\Colton\PlayerController.cs" Line="14" Column="38" />
+>>>>>>> origin/master
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
