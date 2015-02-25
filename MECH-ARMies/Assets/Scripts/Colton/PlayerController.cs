@@ -8,8 +8,8 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public float tilt;
 
-
-
+	public float setVolume;
+	public AudioClip shotsFired;
     public GameObject shot;
     public Transform shootingOrigin1;
     public Transform shootingOrigin2;
@@ -17,11 +17,21 @@ public class PlayerController : MonoBehaviour
 
     private float nextFire;
 
+	AudioSource playerAudio;
+
+	void Start()
+	{
+		playerAudio = GetComponent<AudioSource> ();
+	}
+
     void Update()
     {
         if (Input.GetButton("Fire1") && Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
+			playerAudio.clip = shotsFired;
+			playerAudio.volume = setVolume;
+			playerAudio.Play();
             Instantiate(shot, shootingOrigin1.position, shootingOrigin1.rotation);
             Instantiate(shot, shootingOrigin2.position, shootingOrigin2.rotation);
 
