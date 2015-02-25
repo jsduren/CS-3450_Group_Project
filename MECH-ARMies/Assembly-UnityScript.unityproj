@@ -101,9 +101,13 @@
      <None Include="Assets\Terrain\Josh\Forest Grounds - Terrain Texture Pack\Readme.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Bump.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionHigh.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Bump.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Explosion.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Diffuse.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionLow.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionMed.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Diffuse.shader" />
      <None Include="Assets\Terrain\Josh\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Bump.shader" />
@@ -126,6 +130,9 @@
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Diffuse.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent Bump.shader" />
+     <None Include="Assets\Models\Josh\Detonator Explosion Framework\Resources\Detonator\Textures\HeatDistort.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\README.txt" />
+     <None Include="Assets\Models\Josh\True Explosions\System\Shaders\SphereVolumetricExplosion.shader" />
      <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Bump.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Specular.shader" />
