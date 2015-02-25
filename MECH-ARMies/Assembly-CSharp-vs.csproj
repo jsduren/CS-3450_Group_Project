@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_6_1;UNITY_4_6;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_6_2;UNITY_4_6;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -47,17 +47,48 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\MouseLook.cs" />
-     <Compile Include="Assets\MainBaseHealth.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\Detonator.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorCloudRing.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorComponent.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorFireball.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorForce.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorGlow.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorHeatwave.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorLight.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorShockwave.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorSmoke.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorSound.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorSparks.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\DetonatorSpray.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\TestScene\DetonatorTest.cs" />
+     <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\TestScene\TouchToMouse.cs" />
+     <Compile Include="Assets\Models\Josh\PorglezompPyroclastics\ExplosionMat.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\PseudoVolumetricExplosion.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\ExploderComponent.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\LightComponent.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\ParticleComponent.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\PseudoVolumetricComponent.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\VolumetricComponent.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\effects\exploderComponents\VolumetricComponent2D.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\Exploder.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\Exploder2D.cs" />
+     <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\SphereExploder.cs" />
      <Compile Include="Assets\Scripts\Colton\CameraController.cs" />
      <Compile Include="Assets\Scripts\Colton\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Colton\RemoveShots.cs" />
      <Compile Include="Assets\Scripts\Colton\Shooting.cs" />
      <Compile Include="Assets\Scripts\Josh\Base Scripts\MainBaseAttributes.cs" />
+     <Compile Include="Assets\Scripts\Josh\Base Scripts\MainBaseHealth.cs" />
      <Compile Include="Assets\Scripts\Josh\Base Scripts\RegenNPickUp.cs" />
      <Compile Include="Assets\Scripts\Josh\Base Scripts\SmallBaseAttributes.cs" />
      <Compile Include="Assets\Scripts\Josh\GameController.cs" />
      <Compile Include="Assets\Scripts\Josh\Non-Passable\NonPassable.cs" />
+     <Compile Include="Assets\Scripts\Josh\Player\PlayerAttributes.cs" />
      <Compile Include="Assets\Terrain\Josh\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
+     <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
+     <Compile Include="Assets\UnitShooting.cs" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Bump.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent.shader" />
@@ -65,9 +96,13 @@
      <None Include="Assets\Terrain\Josh\Forest Grounds - Terrain Texture Pack\Readme.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Bump.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionHigh.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Bump.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Explosion.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Diffuse.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionLow.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionMed.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Diffuse.shader" />
      <None Include="Assets\Terrain\Josh\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Bump.shader" />
@@ -90,6 +125,9 @@
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Diffuse.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent Bump.shader" />
+     <None Include="Assets\Models\Josh\Detonator Explosion Framework\Resources\Detonator\Textures\HeatDistort.shader" />
+     <None Include="Assets\Models\Josh\PorglezompPyroclastics\README.txt" />
+     <None Include="Assets\Models\Josh\True Explosions\System\Shaders\SphereVolumetricExplosion.shader" />
      <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Bump.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Specular.shader" />
@@ -97,7 +135,7 @@
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
      <None Include="Assets\Prefab\Josh\ShmupShipSample\readme.txt" />
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
