@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\BuildingCapture.cs" />
      <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\MouseLook.cs" />
      <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
      <Compile Include="Assets\Models\Josh\Detonator Explosion Framework\System\Detonator.cs" />
@@ -88,6 +89,7 @@
      <Compile Include="Assets\Scripts\Josh\Player\PlayerAttributes.cs" />
      <Compile Include="Assets\Terrain\Josh\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
      <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
+     <Compile Include="Assets\UnitMovement.cs" />
      <Compile Include="Assets\UnitShooting.cs" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Bump.shader" />
@@ -133,7 +135,6 @@
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
-     <None Include="Assets\Prefab\Josh\ShmupShipSample\readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
  </Reference>

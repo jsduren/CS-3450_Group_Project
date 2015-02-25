@@ -93,7 +93,6 @@
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Specular.shader" />
      <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
-     <None Include="Assets\Prefab\Josh\ShmupShipSample\readme.txt" />
  <Reference Include="Assembly-UnityScript">
  <HintPath>C:/Dropbox/CS 3540/MECH-ARMies/MECH-ARMies/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
  </Reference>

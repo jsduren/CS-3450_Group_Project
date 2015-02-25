@@ -8,15 +8,19 @@ public class MainBaseHealth : MonoBehaviour {
 	public int currentBaseHealth;
 	public Image damageImage;
 	public Slider healthSlider;
-	public AudioClip explosionClip;
 	public AudioClip damagedClip;
-	public Animation damagedAnimation;
-	public GameObject baseExplosion;
-	
+	public Animator damagedAnimation;
+	public GameObject playerObject;
+	public Vector3 playerStartingPosition;
+	public float timeAfterDamageToEnd = 6f;
+	private float timeWhenDamageAnimEnds;
+
 	Animator anim;
 	AudioSource baseAudio;
-	bool isDead;
-	bool damaged;
+	private bool isDead = false;
+	private bool damaged;
+	public bool testDamage;
+	public int damageDelt;
 
 	// Use this for initialization
 	void Start () {
@@ -27,33 +31,40 @@ public class MainBaseHealth : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (testDamage) {
+			TakeDamage(damageDelt);
+		}
+
 		if (damaged) {
-			anim.SetTrigger ("Damaged");
-			damageImage.enabled = true;
-		} else {
-			damageImage.enabled = false;
+			anim.SetBool ("isDamaged", true);
+		}
+		if(damaged && timeWhenDamageAnimEnds < Time.time){
+			anim.SetBool ("isDamaged", false);
+			damaged = false;
 		}
 	}
 
 
 	public void TakeDamage(int amount){
+		timeWhenDamageAnimEnds = Time.time + timeAfterDamageToEnd;
 		damaged = true;
 		currentBaseHealth -= amount;
 		healthSlider.value = currentBaseHealth;
-		baseAudio.clip = damagedClip;
 		baseAudio.Play ();
 
-		if (currentBaseHealth <= 0 && isDead) {
+		if (currentBaseHealth <= 0) {
+			isDead = true;
+			testDamage = false;
+			damaged = false;
+		}
+		if (isDead) {
 			Destroyed();
 		}	
 	}
 
 	void Destroyed(){
 		isDead = true;
-
-		anim.SetTrigger ("Explode");
-
-		baseAudio.clip = explosionClip;
-		baseAudio.Play ();
+		playerObject.GetComponent<Transform>().position = playerStartingPosition;
+		anim.SetBool ("isDestroyed", true);
 	}
 }
