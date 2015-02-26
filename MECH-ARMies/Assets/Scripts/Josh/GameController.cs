@@ -20,11 +20,12 @@ public class GameController : MonoBehaviour {
 	public int Player2Money;
 	public int StartingMoney;
     public GameObject MenuController;
+    //private MenuController _menuController;
 
 	// Use this for initialization
 	void Start () {
         //Make menuController
-        Instantiate(MenuController);
+	    Instantiate(MenuController);
 
         //initialize other values
 		gameOverPlayer1 = false;
@@ -36,6 +37,11 @@ public class GameController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        /*
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            bool IsVisible = _menuController.gameObject.GetComponent("IsVisible");
+            IsVisible = !IsVisible;
+        } */
 	}
 }
