@@ -19,12 +19,19 @@ public class GameController : MonoBehaviour {
 	public int Player1Money;
 	public int Player2Money;
 	public int StartingMoney;
+    public GameObject MenuController;
+
 	// Use this for initialization
 	void Start () {
+        //Make menuController
+        Instantiate(MenuController);
+
+        //initialize other values
 		gameOverPlayer1 = false;
 		gameOverPlayer2 = false;
 		Player1Money = StartingMoney;
 		Player2Money = StartingMoney;
+
 	}
 	
 	// Update is called once per frame
