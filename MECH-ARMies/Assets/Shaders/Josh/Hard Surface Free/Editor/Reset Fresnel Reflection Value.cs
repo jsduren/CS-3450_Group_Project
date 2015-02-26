@@ -6,7 +6,7 @@ using System.Collections;
 
 public class MaterialValuesCopier : ScriptableObject
 {
-	private static Material mat;
+	public static Material mat;
 	private static float frezvalue;
 	
 
