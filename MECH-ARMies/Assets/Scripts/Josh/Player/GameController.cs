@@ -5,17 +5,8 @@ public class GameController : MonoBehaviour {
 	private bool gameOverPlayer1;
 	private bool gameOverPlayer2;
 	
-	public GameObject Player1MainBase;
-	public GameObject Player2MainBase;
-	public GameObject SmallBase1;
-	public GameObject SmallBase2;
-	public GameObject SmallBase3;
-	public GameObject SmallBase4;
-	public GameObject SmallBase5;
-	public GameObject SmallBase6;
-	public GameObject SmallBase7;
-	public GameObject SmallBase8;
-	public GameObject SmallBase9;
+	public GameObject[] smallBases = new GameObject[9];
+	public GameObject[] mainBases = new GameObject[2];
 	public int Player1Money;
 	public int Player2Money;
 	public int StartingMoney;
@@ -29,7 +20,17 @@ public class GameController : MonoBehaviour {
 	void Start () {
 		//Make menuController
 		Instantiate(MenuController);
-		
+
+		for (int x = 0; x < mainBases.Length; x++) {
+			mainBases [x] = GameObject.FindGameObjectWithTag ("Player" + (x + 1) + "Base");
+		}
+
+		MenuController = GameObject.FindGameObjectWithTag ("MenuController");
+
+		for (int i = 0; i < smallBases.Length; i++) {
+			smallBases [i] = GameObject.FindGameObjectWithTag ("SmallBase" + (i + 1));
+		}
+
 		//initialize other values
 		gameOverPlayer1 = false;
 		gameOverPlayer2 = false;
@@ -40,13 +41,16 @@ public class GameController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Player1MainBase.GetComponent<MainBaseHealth> ().isDead) {
-			gameOverPlayer1 = true;	
+		for (int x = 0; x < mainBases.Length; x++) {
+			if (mainBases[x] != null && mainBases[x].GetComponent<MainBaseHealth>().isDead) {
+				if (mainBases[x].GetComponent<ObjectAttributes>().currentTeam == "Player1"){
+					gameOverPlayer1 = true;	
+				}else{
+					gameOverPlayer2 = true;
+				}
+			}
 		}
-		
-		if (Player2MainBase.GetComponent<MainBaseHealth> ().isDead) {
-			gameOverPlayer2 = true;	
-		}
+
 		/*
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {

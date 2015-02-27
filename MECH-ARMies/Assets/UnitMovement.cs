@@ -4,17 +4,17 @@ using System.Collections;
 public class UnitMovement : MonoBehaviour {
 	Transform player2MainBase;
 	NavMeshAgent nav;
-	
-	public GameObject[] smallBases = new GameObject[9];
-	public GameObject[] mainBases = new GameObject[2];
+
+	private GameObject[] smallBases = new GameObject[9];
+	private GameObject[] mainBases = new GameObject[2];
 	public GameObject playerGameObject;
 	
 	public GameObject closestBaseNow;
+	private bool isAwake = false;
 	
 	// Use this for initialization
 	void Awake () {
-		player2MainBase = GameObject.FindGameObjectWithTag ("Player2Base").transform;
-		
+
 		for (int x = 0; x < mainBases.Length; x++) {
 			mainBases [x] = GameObject.FindGameObjectWithTag ("Player" + (x + 1) + "Base");
 		}
@@ -26,18 +26,21 @@ public class UnitMovement : MonoBehaviour {
 		}
 		nav = GetComponent<NavMeshAgent> ();
 		closestBaseNow = GameObject.FindGameObjectWithTag ("Player1Base");
+		isAwake = true;
 	}
 	
 	// Update is called once per frameif 
 	void Update () {
-		nav.SetDestination (FindNearestBase ());
+		if (isAwake) {
+			nav.SetDestination (FindNearestBase ());
+		}
 	}
 	
 	public Vector3 FindNearestBase(){
 		Vector3 closestBase = new Vector3(2000f,2000f,2000f);
 		float distance = 2000f;
 		for (int k = 0; k < smallBases.Length; k++) {
-			if (smallBases[k].GetComponent<SmallBaseAttributes>().currentTeam != GetComponent<UnitAttributes>().currentTeam){
+			if (smallBases[k] != null && smallBases[k].GetComponent<SmallBaseAttributes>().currentTeam != GetComponent<ObjectAttributes>().currentTeam){
 				if (distance >= Vector3.Distance (smallBases[k].transform.position, gameObject.transform.position)){
 					distance = Vector3.Distance (smallBases[k].transform.position, gameObject.transform.position);
 					closestBase = smallBases[k].transform.position;
@@ -47,7 +50,7 @@ public class UnitMovement : MonoBehaviour {
 		}
 		
 		for (int z = 0; z < mainBases.Length; z++) {
-			if (mainBases[z].GetComponent<MainBaseAttributes>().currentTeam != GetComponent<UnitAttributes>().currentTeam){
+			if (mainBases[z] != null && mainBases[z].GetComponent<MainBaseAttributes>().currentTeam != GetComponent<ObjectAttributes>().currentTeam){
 				if (distance >= Vector3.Distance (mainBases[z].transform.position, gameObject.transform.position)){
 					distance = Vector3.Distance (mainBases[z].transform.position, gameObject.transform.position);
 					closestBase = mainBases[z].transform.position;
@@ -55,9 +58,11 @@ public class UnitMovement : MonoBehaviour {
 				}
 			}
 		}
-		
+
 		return closestBase;
 	}
+
+
 	
 	
 }

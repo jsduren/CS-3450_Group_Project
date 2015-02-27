@@ -1,3 +1,5 @@
 Base path: C:/Program Files (x86)/Unity/Editor/Data
-Pipe name: \\.\pipe\UnityShaderCompiler-1-4580
+Pipe name: \\.\pipe\UnityShaderCompiler-1-5500
 Cmd: getPlatforms
+Cmd: preprocess
+  insize=3105 outsize=1735 ok=1

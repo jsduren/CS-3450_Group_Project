@@ -77,6 +77,7 @@
      <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\Exploder.cs" />
      <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\Exploder2D.cs" />
      <Compile Include="Assets\Models\Josh\True Explosions\System\Scripts\exploders\SphereExploder.cs" />
+     <Compile Include="Assets\ObjectAttributes.cs" />
      <Compile Include="Assets\Scripts\Colton\CameraController.cs" />
      <Compile Include="Assets\Scripts\Colton\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Colton\RemoveShots.cs" />
@@ -92,7 +93,6 @@
      <Compile Include="Assets\Scripts\Stephen\enemyAIscript.cs" />
      <Compile Include="Assets\Terrain\Josh\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
      <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
-     <Compile Include="Assets\UnitAttributes.cs" />
      <Compile Include="Assets\UnitMovement.cs" />
      <Compile Include="Assets\UnitShooting.cs" />
      <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
