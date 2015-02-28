@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using System.Collections;
 
 public class DestroyByContact : MonoBehaviour
@@ -22,4 +22,4 @@ public class DestroyByContact : MonoBehaviour
 			//playerAudio.Play();
 		}
 	}
-}
+}*/
