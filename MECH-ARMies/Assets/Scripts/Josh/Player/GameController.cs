@@ -11,14 +11,19 @@ public class GameController : MonoBehaviour {
 	public int Player2Money;
 	public int StartingMoney;
 	public GameObject MenuController;
-	//public GameObject Ship;
-	//private Vector3 location = new Vector3(105,34.5f,105);	
+
+    public GameObject PlayerGameObject;
+    private Vector3 location = new Vector3(105, 34.5f, 105);
+	
 	
 	//private MenuController _menuController;
 	
 	// Use this for initialization
 	void Start () {
 		//Make menuController
+        PlayerGameObject = (GameObject)Instantiate(PlayerGameObject, location, PlayerGameObject.transform.rotation);
+
+
 		Instantiate(MenuController);
 
 		for (int x = 0; x < mainBases.Length; x++) {
