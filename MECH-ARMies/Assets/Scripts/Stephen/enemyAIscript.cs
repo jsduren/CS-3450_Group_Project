@@ -13,7 +13,7 @@ public class enemyAIscript : MonoBehaviour {
 	public GameObject shot;
 	public Transform shootingOrigin;
 	public GameObject target;
-	public float health = 10;
+    public float health = 10;
 
 	AudioSource UnitAudio;
 	private float lastShotTime = float.MinValue;
@@ -25,7 +25,8 @@ public class enemyAIscript : MonoBehaviour {
 	{
 		if (target != null)
 			return;
-		if (other.GetComponent<ObjectAttributes> ().unitType == "PlayerHunterSeeker") 
+
+        if (other!=null && other.GetComponent<ObjectAttributes>() != null && other.GetComponent<ObjectAttributes>().unitType == "Mech") 
 			if (transform.GetComponent<ObjectAttributes> ().currentTeam != other.gameObject.GetComponent<ObjectAttributes> ().currentTeam)
 			{
 				target = other.gameObject;
@@ -42,7 +43,7 @@ public class enemyAIscript : MonoBehaviour {
 	{
 		if(target==null)return;
 		var target2Dposition = new Vector3 (target.transform.position.x, transform.position.y, target.transform.position.z);
-		targetDistance = Vector3.Distance (target.transform.position, target2Dposition);
+		targetDistance = Vector3.Distance (transform.position, target2Dposition);
 		//turn to look
 		Quaternion rotation = Quaternion.LookRotation (target2Dposition - transform.position,Vector3.up);
 		transform.rotation = Quaternion.Slerp (transform.rotation, rotation, Time.deltaTime * rotationDamping);

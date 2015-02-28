@@ -21,7 +21,7 @@ public class Shooting : MonoBehaviour {
 	void OnTriggerStay(Collider other) 
 	{
 		if (timer > 55)return;//this is wrong, figure out a better way to make sure the currentTeam of the bullet is identical to the shooter before this is called
-		if (other.GetComponent<ObjectAttributes> ().unitType == "PlayerHunterSeeker" || other.GetComponent<ObjectAttributes> ().unitType == "Mech") 
+		if (other!=null && other.GetComponent<ObjectAttributes> ()!= null && other.GetComponent<ObjectAttributes> ().unitType == "Mech") 
 		//	if (gameObject.GetComponent<UnitAttributes> ().currentTeam != other.gameObject.GetComponent<UnitAttributes> ().currentTeam)
 		{
 			other.gameObject.SendMessage("ApplyDamage",1);

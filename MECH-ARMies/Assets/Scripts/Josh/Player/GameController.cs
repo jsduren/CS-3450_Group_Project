@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour {
 	public int StartingMoney;
 	public GameObject MenuController;
 
+    public GameObject enemyUnit;
+
     public GameObject PlayerGameObject;
     private Vector3 location = new Vector3(105, 34.5f, 105);
 	
@@ -23,6 +25,7 @@ public class GameController : MonoBehaviour {
 		//Make menuController
         PlayerGameObject = (GameObject)Instantiate(PlayerGameObject, location, PlayerGameObject.transform.rotation);
 
+	    SpawnUnits();
 
 		Instantiate(MenuController);
 
@@ -63,4 +66,14 @@ public class GameController : MonoBehaviour {
             IsVisible = !IsVisible;
         } */
 	}
+
+    void SpawnUnits()
+    {
+        var spawnLocs = GameObject.FindGameObjectsWithTag("SpawnPoint");
+        foreach (var loc in spawnLocs)
+        {
+            Instantiate(enemyUnit, loc.transform.position, enemyUnit.transform.rotation);
+        }
+    }
+    
 }

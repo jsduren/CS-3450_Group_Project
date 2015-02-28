@@ -13,17 +13,22 @@ public class MechController : MonoBehaviour
     //public AudioClip shotsFired;
     public GameObject shot;
     public Transform shootingOrigin;
+    public GameOverMenuController gameOverMenuController;
 
     private float fireRate = 0.25f;
     private float tranformRate = .25f;
+    public int health = 5;
 
     private float nextFire;
     private float nextTransform;
+
+    public Text gameOverText;
 
     //AudioSource playerAudio;
 
     void Start()
     {
+  
         //playerAudio = GetComponent<AudioSource>();
     }
 
@@ -46,6 +51,22 @@ public class MechController : MonoBehaviour
 
         }
 
+    }
+
+    void ApplyDamage(int damage)
+    {
+        health -= damage;
+        if (health < 1)
+            GameOver();
+            
+    }
+
+    void GameOver()
+    {
+        gameOverMenuController.GetComponent<GameOverMenuController>().ShowMenu();
+        gameOverText.text = "Game Over!";
+        gameOverText.BroadcastMessage("GAME OVER!");
+        Destroy(gameObject);
     }
 
     void SwitchPlayer()
