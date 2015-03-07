@@ -13,7 +13,7 @@ public class MechController : MonoBehaviour
     //public AudioClip shotsFired;
     public GameObject shot;
     public Transform shootingOrigin;
-    public GameOverMenuController gameOverMenuController;
+    //public GameOverMenuController gameOverMenuController;
 
     private float fireRate = 0.25f;
     private float tranformRate = .25f;
@@ -22,7 +22,7 @@ public class MechController : MonoBehaviour
     private float nextFire;
     private float nextTransform;
 
-    public Text gameOverText;
+    //public Text gameOverText;
 
     //AudioSource playerAudio;
 
@@ -63,9 +63,9 @@ public class MechController : MonoBehaviour
 
     void GameOver()
     {
-        gameOverMenuController.GetComponent<GameOverMenuController>().ShowMenu();
-        gameOverText.text = "Game Over!";
-        gameOverText.BroadcastMessage("GAME OVER!");
+       // gameOverMenuController.GetComponent<GameOverMenuController>().ShowMenu();
+       // gameOverText.text = "Game Over!";
+       // gameOverText.BroadcastMessage("GAME OVER!");
         Destroy(gameObject);
     }
 
