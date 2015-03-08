@@ -1,6 +1,8 @@
 //This script controls how the soldier will move.
 @script RequireComponent(CharacterController);
 
+var jet : GameObject;
+
 var forwardSpeedMultiplier : float = 3.0;
 var strafeSpeedMultiplier : float = 2.0;
 var turnSpeedMultiplier : float = 6.0;
@@ -23,6 +25,7 @@ private var isFalling : boolean;
 private var healthScript : health;
 private var recoilAmount : float;
 private var recoilAmountTarget : float;
+private var nextTransform : float;
 
 function Start(){
 	crouchControllerScript = GetComponent("crouchController");
@@ -137,4 +140,15 @@ function Update () {
 	targetTurnSpeed *= deathInhibit;
 	turnSpeed = Mathf.Lerp(turnSpeed, targetTurnSpeed, Time.deltaTime * 25.0);
 	transform.rotation.eulerAngles.y += turnSpeed * Time.deltaTime;
+
+	if (Input.GetButtonDown("Change") && Time.time > nextTransform)
+	{
+
+	    var location : Vector3 = new Vector3(transform.position.x, 34.5f, transform.position.z);
+	    Instantiate(jet, location, transform.rotation);
+	    DestroyImmediate(gameObject);
+
+	}
+
 }
+
