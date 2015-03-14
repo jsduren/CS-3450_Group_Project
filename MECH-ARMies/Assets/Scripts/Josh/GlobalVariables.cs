@@ -63,6 +63,9 @@ public abstract class Unit : Object
     public abstract int _GuardRange { get; set; }
     public abstract bool _CanMove { get; set; }
     public abstract bool _IsDead { get; set; }
+    public abstract int _Cost { get; set; }
+    public abstract float _ProductionTime { get; set; }
+    public abstract ProgramType[] _PossiblePrograms { get; set; }
     public abstract WeaponsType _Weapons { get; set; }
     public abstract int _GunAttackDamage { get; set; }
     public abstract int _MissileAttackDamage { get; set; }
@@ -81,19 +84,21 @@ public abstract class Unit : Object
             }
         }
     }
-    public void Shoot(GameObject curTargetGameObject)
+    public GameObject Shoot(GameObject curTargetGameObject)
     {
         if (_CanShoot && !_IsDead)
         {
 
         }
+        return curTargetGameObject;
     }
-    public void Move(GameObject curClosestGameObject)
+    public GameObject Move(GameObject curClosestGameObject)
     {
         if (_CanMove && !_IsDead)
         {
 
         }
+        return curClosestGameObject;
     }
 
     public void Death()
@@ -128,6 +133,15 @@ public sealed class Infantry : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
     
     public Infantry()
     {
@@ -147,6 +161,9 @@ public sealed class Infantry : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public Infantry(string curTeam, ProgramType unitProgram, UType unitType = UType.Infantry, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -169,6 +186,9 @@ public sealed class Infantry : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -184,6 +204,9 @@ public sealed class Infantry : Unit
     public override int _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
@@ -206,6 +229,15 @@ public sealed class Jeep : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public Jeep()
     {
@@ -225,6 +257,9 @@ public sealed class Jeep : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public Jeep(string curTeam, ProgramType unitProgram, UType unitType = UType.Jeep, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -247,6 +282,9 @@ public sealed class Jeep : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -260,9 +298,12 @@ public sealed class Jeep : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -285,6 +326,15 @@ public sealed class Tank : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public Tank()
     {
@@ -304,6 +354,9 @@ public sealed class Tank : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public Tank(string curTeam, ProgramType unitProgram, UType unitType = UType.Tank, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -326,6 +379,9 @@ public sealed class Tank : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -339,9 +395,12 @@ public sealed class Tank : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -363,6 +422,15 @@ public sealed class SAM : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public SAM()
     {
@@ -382,6 +450,9 @@ public sealed class SAM : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public SAM(string curTeam, ProgramType unitProgram, UType unitType = UType.SAM, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -404,6 +475,9 @@ public sealed class SAM : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -417,9 +491,12 @@ public sealed class SAM : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -442,6 +519,12 @@ public sealed class Turret : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround
+    };
 
     public Turret()
     {
@@ -461,6 +544,9 @@ public sealed class Turret : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public Turret(string curTeam, ProgramType unitProgram, UType unitType = UType.Turret, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -483,6 +569,9 @@ public sealed class Turret : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -496,9 +585,12 @@ public sealed class Turret : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -521,6 +613,15 @@ public sealed class SmallBase : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public SmallBase()
     {
@@ -540,6 +641,9 @@ public sealed class SmallBase : Unit
         _UnitGameObject = null;
         _CanMove = true;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public SmallBase(string curTeam, ProgramType unitProgram, UType unitType = UType.SmallBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -562,6 +666,9 @@ public sealed class SmallBase : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -575,9 +682,12 @@ public sealed class SmallBase : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -600,6 +710,15 @@ public sealed class MainBase : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public MainBase()
     {
@@ -619,6 +738,9 @@ public sealed class MainBase : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public MainBase(string curTeam, ProgramType unitProgram, UType unitType = UType.MainBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -641,6 +763,9 @@ public sealed class MainBase : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public override bool _IsShootable { get; set; }
@@ -653,9 +778,12 @@ public sealed class MainBase : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -677,6 +805,15 @@ public sealed class Shots : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public Shots()
     {
@@ -696,6 +833,9 @@ public sealed class Shots : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public Shots(string curTeam, ProgramType unitProgram = ProgramType.ShotFired, UType unitType = UType.Shots, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -718,6 +858,9 @@ public sealed class Shots : Unit
         _UnitGameObject = null;
         _CanMove = false;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -731,9 +874,12 @@ public sealed class Shots : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -756,6 +902,15 @@ public sealed class PlayerPlane : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public PlayerPlane()
     {
@@ -775,6 +930,9 @@ public sealed class PlayerPlane : Unit
         _UnitGameObject = null;
         _CanMove = true;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public PlayerPlane(string curTeam, ProgramType unitProgram, UType unitType = UType.PlayerPlane, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -797,6 +955,9 @@ public sealed class PlayerPlane : Unit
         _UnitGameObject = null;
         _CanMove = true;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -810,9 +971,12 @@ public sealed class PlayerPlane : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
@@ -834,6 +998,15 @@ public sealed class PlayerMech : Unit
     private const int CargoSpace = 0;
     private const GameObject[] Cargo = null;
     private const WeaponsType Weapons = WeaponsType.Guns;
+    private const int Cost = 40;
+    private const float ProductionTIme = 6;
+    private ProgramType[] PossibleProgTypes = 
+    {
+        ProgramType.StandGround,
+        ProgramType.Guard,
+        ProgramType.NearestBase,
+        ProgramType.AttackMain
+    };
 
     public PlayerMech()
     {
@@ -853,6 +1026,9 @@ public sealed class PlayerMech : Unit
         _UnitGameObject = null;
         _CanMove = true;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
     }
 
     public PlayerMech(string curTeam, ProgramType unitProgram, UType unitType = UType.PlayerMech, int life = MaxUnitLife, int energy = MaxUnitEnergy,
@@ -875,6 +1051,9 @@ public sealed class PlayerMech : Unit
         _UnitGameObject = null;
         _CanMove = true;
         _IsDead = false;
+        _Cost = Cost;
+        _ProductionTime = ProductionTIme;
+        _PossiblePrograms = PossibleProgTypes;
 
     }
 
@@ -888,9 +1067,12 @@ public sealed class PlayerMech : Unit
     public override int _GunRange { get; set; }
     public override int _MissileRange { get; set; }
     public override int _GuardRange { get; set; }
-    public override WeaponsType _Weapons { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
+    public override int _Cost { get; set; }
+    public override float _ProductionTime { get; set; }
+    public override ProgramType[] _PossiblePrograms { get; set; }
+    public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }

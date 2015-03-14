@@ -97,6 +97,7 @@
     <Compile Include="Assets\Scripts\Josh\Base Scripts\MainBaseHealth.cs" />
     <Compile Include="Assets\Scripts\Josh\Base Scripts\RegenNPickUp.cs" />
     <Compile Include="Assets\Scripts\Josh\Base Scripts\SmallBaseAttributes.cs" />
+    <Compile Include="Assets\Scripts\Josh\GlobalVariables.cs" />
     <Compile Include="Assets\Scripts\Josh\Non-Passable\NonPassable.cs" />
     <Compile Include="Assets\Scripts\Josh\Player\GameController.cs" />
     <Compile Include="Assets\Scripts\Josh\Player\PlayerAttributes.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Assets\Scripts\Stephen\enemyAIscript.cs" />
     <Compile Include="Assets\Terrain\Josh\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
     <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
+    <Compile Include="Assets\UnitController.cs" />
     <Compile Include="Assets\UnitMovement.cs" />
     <Compile Include="Assets\UnitShooting.cs" />
   </ItemGroup>

@@ -39,7 +39,7 @@ public class UnitController : MonoBehaviour {
 	        ThisUnit._CurTeam = curTeam;
 	    }
         curTarget = ThisUnit.Shoot(curTarget);
-	    if (ThisUnit._UnitProgram = ProgramType.Guard)
+	    if (ThisUnit._UnitProgram == ProgramType.Guard)
 	    {
             curClosestBaseNow = ThisUnit.Move(curTarget);
 	    }
