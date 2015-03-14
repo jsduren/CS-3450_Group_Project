@@ -6,14 +6,18 @@ using System.Runtime.InteropServices;
 public class MenuController : MonoBehaviour
 {
     public Rect guiWindow;
-    float windowWidth = Screen.width * 0.6f;
-    float windowHeight = Screen.height * 0.6f;
+    private float windowWidth = Screen.width*0.6f;
+    private float windowHeight = Screen.height*0.6f;
     public bool IsVisible = false;
+
+    private GameObject jet;
+    private JetController jetController;
 
     private int unitIndex = 0;
     private int orderIndex = 0;
     public Texture infantryPortrait;
     public Texture vehiclePortrait;
+    public Texture turretPortarit;
     public Texture moveButton;
     public Texture guardButton;
     private Texture[] portraits;
@@ -23,12 +27,13 @@ public class MenuController : MonoBehaviour
     private string[] unitText;
     private string[] orderText;
 
-    void Start()
+    private void Start()
     {
         portraits = new Texture[]
         {
             infantryPortrait,
-            vehiclePortrait
+            vehiclePortrait,
+            turretPortarit
         };
 
         orders = new Texture[]
@@ -39,17 +44,17 @@ public class MenuController : MonoBehaviour
 
         unitCosts = new int[]
         {
-            100,250
+            100, 250, 250
         };
 
         orderCosts = new int[]
         {
-            50,0
+            50, 0
         };
 
         unitText = new string[]
         {
-            "Infantry", "Humvee"
+            "Infantry", "Humvee", "Turret"
         };
 
         orderText = new string[]
@@ -58,11 +63,11 @@ public class MenuController : MonoBehaviour
         };
     }
 
-    void OnGUI()
+    private void OnGUI()
     {
         if (!IsVisible) return;
-        Rect windowRect = new Rect((Screen.width / 2) - (windowWidth / 2),
-            (Screen.height / 2) - (windowHeight / 2), Math.Max(windowWidth, 200), Math.Max(windowHeight, 400));
+        Rect windowRect = new Rect((Screen.width/2) - (windowWidth/2),
+            (Screen.height/2) - (windowHeight/2), Math.Max(windowWidth, 200), Math.Max(windowHeight, 400));
         guiWindow = GUI.Window(0, windowRect, drawWindow, "Command Menu");
     }
 
@@ -86,8 +91,9 @@ public class MenuController : MonoBehaviour
             arrowButtonWidth,
             arrowButtonHeight), "<"))
             unitIndex = Math.Max(0, unitIndex - 1);
+            
 
-        var unitRightArrowButtonX = unitLeftArrowButtonX + arrowButtonWidth + unitPortraitWidth + spacing * 2;
+        var unitRightArrowButtonX = unitLeftArrowButtonX + arrowButtonWidth + unitPortraitWidth + spacing*2;
         var unitRightArrowButtonY = unitLeftArrowButtonY;
         if (GUI.Button(new Rect(
             unitRightArrowButtonX,
@@ -95,6 +101,7 @@ public class MenuController : MonoBehaviour
             arrowButtonWidth,
             arrowButtonHeight), ">"))
             unitIndex = Math.Min(1, unitIndex + 1);
+           
 
         //put unit portrait texture in here
         var unitPortraitSkinX = unitLeftArrowButtonX + arrowButtonWidth + spacing;
@@ -103,11 +110,12 @@ public class MenuController : MonoBehaviour
         GUI.DrawTexture(unitPortraitRect, portraits[unitIndex]);
 
         //put unit cost text here
-        GUI.Label(new Rect(unitPortraitSkinX, unitPortraitSkinY + unitPortraitHeight + spacing, 200, 30), unitText[unitIndex] + " - " + unitCosts[unitIndex] + " Credits");
+        GUI.Label(new Rect(unitPortraitSkinX, unitPortraitSkinY + unitPortraitHeight + spacing, 200, 30),
+            unitText[unitIndex] + " - " + unitCosts[unitIndex] + " Credits");
 
         ////Order select
 
-        var orderLeftArrowButtonX = windowWidth * 0.5f - unitPortraitWidth * 0.5f - spacing - arrowButtonWidth;
+        var orderLeftArrowButtonX = windowWidth*0.5f - unitPortraitWidth*0.5f - spacing - arrowButtonWidth;
         var orderLeftArrowButtonY = unitLeftArrowButtonY + unitPortraitHeight + spacing + costLineHeight + spacing;
         if (GUI.Button(new Rect(
             orderLeftArrowButtonX,
@@ -116,7 +124,7 @@ public class MenuController : MonoBehaviour
             arrowButtonHeight), "<"))
             orderIndex = Math.Max(0, orderIndex - 1);
 
-        var orderRightArrowButtonX = orderLeftArrowButtonX + arrowButtonWidth + unitPortraitWidth + spacing * 2;
+        var orderRightArrowButtonX = orderLeftArrowButtonX + arrowButtonWidth + unitPortraitWidth + spacing*2;
         var orderRightArrowButtonY = orderLeftArrowButtonY;
         if (GUI.Button(new Rect(
             orderRightArrowButtonX,
@@ -135,29 +143,41 @@ public class MenuController : MonoBehaviour
         GUI.DrawTexture(orderPortraitRect, orders[orderIndex]);
 
         //put order cost text here
-        GUI.Label(new Rect(orderPortraitSkinX, orderPortraitSkinY + unitPortraitHeight + spacing, 200, 30), orderText[orderIndex] + " - " + orderCosts[orderIndex] + " Credits");
+        GUI.Label(new Rect(orderPortraitSkinX, orderPortraitSkinY + unitPortraitHeight + spacing, 200, 30),
+            orderText[orderIndex] + " - " + orderCosts[orderIndex] + " Credits");
 
         //Unit build button
-        var buildButtonRect = new Rect(orderPortraitSkinX, orderPortraitSkinY+(unitPortraitHeight*1.25f)+costLineHeight+spacing, unitPortraitWidth, unitPortraitHeight*0.5f);
-        
+        var buildButtonRect = new Rect(orderPortraitSkinX,
+            orderPortraitSkinY + (unitPortraitHeight*1.25f) + costLineHeight + spacing, unitPortraitWidth,
+            unitPortraitHeight*0.5f);
+
         if (GUI.Button(buildButtonRect, "Construct Unit"))
         {
-            ConstructUnit();
+            ConstructUnit(unitText[unitIndex]);
+
         }
 
         //Exit button
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             IsVisible = !IsVisible;
         }
+
+        jet = GameObject.FindWithTag("Player");
     }
 
-    void ConstructUnit()
+    private void ConstructUnit(string unit)
     {
+
         
+        JetController jetController = (JetController) jet.GetComponent(typeof (JetController));
+        jetController.createCargo(unit);
+
+
     }
+
 }

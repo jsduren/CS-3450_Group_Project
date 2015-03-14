@@ -1,19 +1,29 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
 public class JetController : MonoBehaviour
 {
+    private const int cargoCapacity = 4;
+    private int cargoUsed = 0;
     public float speed;
 
     public GameObject mech;
+    public GameObject humvee;
+    public GameObject infantry;
+    public GameObject turret;
+
     
 	public float setVolume;
 	public AudioClip shotsFired;
     public GameObject shot;
     public Transform shootingOrigin1;
     public Transform shootingOrigin2;
+
+    private List<GameObject> cargo = new List<GameObject>(); 
    
     private float fireRate = 0.25f;
     private float tranformRate = .25f;
@@ -44,8 +54,12 @@ public class JetController : MonoBehaviour
         if (Input.GetButtonDown("Change") && Time.time > nextTransform)
         {
 
-               SwitchPlayer();
+            SwitchPlayer();
+        }
 
+        if (Input.GetButtonDown("Cargo"))
+        {
+            dropCargo(cargo);
         }
 
     }
@@ -63,8 +77,6 @@ public class JetController : MonoBehaviour
         float moveZ = Input.GetAxis("Vertical");
 
         Move(moveX, moveZ);
-
-  
 
     }
 
@@ -94,6 +106,67 @@ public class JetController : MonoBehaviour
     //    rigidbody.MoveRotation(newRotation);
     //}
 
- 
+    public void createCargo(string unit)
+    {
+        if(cargoUsed < cargoCapacity)
+        {
+            switch (unit)
+            {
+                case "Humvee":
+                    if ((cargoCapacity - cargoUsed) > 2)
+                    {
+                        cargo.Add(humvee);
+                        cargoUsed += 2;
+                    }
+                    break;
+                case "Infantry":
+                    if ((cargoCapacity - cargoUsed) > 1)
+                    {
+                        cargo.Add(infantry);
+                        cargoUsed += 1;
+                    }
+                    break;
+                case "Turret":
+                    if ((cargoCapacity - cargoUsed) > 2)
+                    {
+                        cargo.Add(turret);
+                        cargoUsed += 2;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            string error = "not enough room";
+        }
+    }
 
+    void dropCargo(List<GameObject> cargoUnits)
+    {
+        if (cargoUnits.Count > 0)
+        {
+            GameObject unit = cargoUnits.Last();
+
+            float x = transform.position.x;
+            float y = 27.0f;
+            float z = transform.position.z;
+
+            Vector3 instantiation = new Vector3(x, y, z);
+
+            Instantiate(unit, instantiation, transform.rotation);
+
+            if (unit == infantry)
+                cargoUsed--;
+            else
+            {
+                cargoUsed -= 2;
+            }
+
+            cargoUnits.Remove(unit);
+
+        }
+    }
 }
+

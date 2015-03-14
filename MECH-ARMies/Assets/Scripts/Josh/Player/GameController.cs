@@ -48,8 +48,10 @@ public class GameController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		for (int x = 0; x < mainBases.Length; x++) {
+	void Update () 
+    {
+		for (int x = 0; x < mainBases.Length; x++)
+        {
 			if (mainBases[x] != null && mainBases[x].GetComponent<MainBaseHealth>().isDead) {
 				if (mainBases[x].GetComponent<ObjectAttributes>().currentTeam == "Player1"){
 					gameOverPlayer1 = true;	
@@ -65,6 +67,9 @@ public class GameController : MonoBehaviour {
             bool IsVisible = _menuController.gameObject.GetComponent("IsVisible");
             IsVisible = !IsVisible;
         } */
+
+
+
 	}
 
     void SpawnUnits()

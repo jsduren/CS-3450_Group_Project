@@ -94,6 +94,7 @@
      <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierMovement.js" />
      <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\weaponController.js" />
      <Compile Include="Assets\Prefab\Josh\omega_fighter_01\script\NewBehaviourScript.js" />
+     <None Include="Assets\Turret\Shaders\AlphaTest_Complete.shader" />
      <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
  <Reference Include="UnityEngine.UI">

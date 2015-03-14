@@ -91,6 +91,7 @@
     <Compile Include="Assets\Scripts\Colton\JetController.cs" />
     <Compile Include="Assets\Scripts\Colton\MechController.cs" />
     <Compile Include="Assets\Scripts\Colton\RemoveShots.cs" />
+    <Compile Include="Assets\Scripts\Colton\Respwan.cs" />
     <Compile Include="Assets\Scripts\Colton\Shooting.cs" />
     <Compile Include="Assets\Scripts\Josh\Base Scripts\MainBaseAttributes.cs" />
     <Compile Include="Assets\Scripts\Josh\Base Scripts\MainBaseHealth.cs" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
     <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
+    <None Include="Assets\Turret\Shaders\AlphaTest_Complete.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>
