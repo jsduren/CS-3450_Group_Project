@@ -50,7 +50,7 @@ public abstract class Unit : Object
     public string _CurTeam { get; set; }
     public UType _UnitType { get; set; }
     public ProgramType _UnitProgram { get; set; }
-
+    
     public abstract bool _IsShootable { get; set; }
     public abstract bool _CanShoot { get; set; }
     public abstract bool _IsCapturable { get; set; }
@@ -64,6 +64,8 @@ public abstract class Unit : Object
     public abstract bool _CanMove { get; set; }
     public abstract bool _IsDead { get; set; }
     public abstract int _Cost { get; set; }
+    public abstract int _Player1UnitCapture { get; set; }
+    public abstract int _Player2UnitCapture { get; set; }
     public abstract float _ProductionTime { get; set; }
     public abstract ProgramType[] _PossiblePrograms { get; set; }
     public abstract WeaponsType _Weapons { get; set; }
@@ -92,11 +94,30 @@ public abstract class Unit : Object
         }
         return curTargetGameObject;
     }
-    public GameObject Move(GameObject curClosestGameObject)
+    public GameObject Move(GameObject gameContObject, GameObject curClosestGameObject, GameObject curUnitGameObject)
     {
-        if (_CanMove && !_IsDead)
+        if (_CanMove && !_IsDead && _UnitProgram != ProgramType.StandGround)
         {
+            if (curClosestGameObject.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam &&
+                !curClosestGameObject.GetComponent<UnitController>().ThisUnit._IsDead)
+            {
+                switch (_UnitProgram)
+                {
+                    case ProgramType.Guard:
 
+                        break;
+                    case ProgramType.NearestBase:
+                        curClosestGameObject = gameContObject.GetComponent<GameController>()
+                            .FindNearestBase(curClosestGameObject, curUnitGameObject);
+                        break;
+
+                    case ProgramType.AttackMain:
+                        curClosestGameObject = gameContObject.GetComponent<GameController>()
+                            .FindNearestBase(curClosestGameObject, curUnitGameObject);
+                        break;
+
+                }
+            }
         }
         return curClosestGameObject;
     }
@@ -114,6 +135,45 @@ public abstract class Unit : Object
     public void Respawn()
     {
 
+    }
+
+    public void BaseCapture(GameObject otherGameObject)
+    {
+        if (_UnitType == UType.SmallBase)
+        {
+            if (otherGameObject.GetComponent<UnitController>().ThisUnit._CurTeam == "Player1")
+            {
+                if (_Player1UnitCapture < 4)
+                {
+                    DestroyObject(otherGameObject);
+                    _Player1UnitCapture += 1;
+                    if (_Player2UnitCapture > 0)
+                    {
+                        _Player2UnitCapture -= 1;
+                    }
+                }
+            }
+            else
+            {
+                if (_Player2UnitCapture < 4)
+                {
+                    DestroyObject(otherGameObject);
+                    _Player2UnitCapture += 1;
+                    if (_Player1UnitCapture > 0)
+                    {
+                        _Player1UnitCapture -= 1;
+                    }
+                }
+            }
+            if (_Player1UnitCapture == 4)
+            {
+                _CurTeam = "Player1";
+            }
+            if (_Player2UnitCapture == 4)
+            {
+                _CurTeam = "Player2";
+            }
+        }
     }
     public abstract GameObject _UnitGameObject { get; set; }
 
@@ -205,6 +265,8 @@ public sealed class Infantry : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -301,6 +363,8 @@ public sealed class Jeep : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -398,6 +462,8 @@ public sealed class Tank : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -494,6 +560,8 @@ public sealed class SAM : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -588,6 +656,8 @@ public sealed class Turret : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -685,6 +755,8 @@ public sealed class SmallBase : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -781,6 +853,8 @@ public sealed class MainBase : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -877,6 +951,8 @@ public sealed class Shots : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -974,6 +1050,8 @@ public sealed class PlayerPlane : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }
@@ -1070,6 +1148,8 @@ public sealed class PlayerMech : Unit
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Cost { get; set; }
+    public override int _Player1UnitCapture { get; set; }
+    public override int _Player2UnitCapture { get; set; }
     public override float _ProductionTime { get; set; }
     public override ProgramType[] _PossiblePrograms { get; set; }
     public override WeaponsType _Weapons { get; set; }

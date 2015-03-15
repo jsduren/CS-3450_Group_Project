@@ -80,5 +80,49 @@ public class GameController : MonoBehaviour {
             Instantiate(enemyUnit, loc.transform.position, enemyUnit.transform.rotation);
         }
     }
-    
+
+    public GameObject FindNearestBase(GameObject curClosestBase, GameObject unitGameObject)
+    {
+        if (curClosestBase.GetComponent<UnitController>().ThisUnit._CurTeam !=
+            unitGameObject.GetComponent<UnitController>().ThisUnit._CurTeam)
+        {
+            float distance = 2000f;
+            if (unitGameObject.GetComponent<UnitController>().ThisUnit._UnitProgram == ProgramType.NearestBase)
+            {
+                for (int k = 0; k < smallBases.Length; k++)
+                {
+                    if (smallBases[k] != null &&
+                        smallBases[k].GetComponent<SmallBaseAttributes>().currentTeam !=
+                        GetComponent<ObjectAttributes>().currentTeam)
+                    {
+                        if (distance >=
+                            Vector3.Distance(smallBases[k].transform.position, unitGameObject.transform.position))
+                        {
+                            distance = Vector3.Distance(smallBases[k].transform.position,
+                                unitGameObject.transform.position);
+                            curClosestBase = smallBases[k];
+                        }
+                    }
+                }
+            }
+
+            for (int z = 0; z < mainBases.Length; z++)
+            {
+                if (mainBases[z] != null &&
+                    mainBases[z].GetComponent<MainBaseAttributes>().currentTeam !=
+                    GetComponent<ObjectAttributes>().currentTeam)
+                {
+                    if (distance >= Vector3.Distance(mainBases[z].transform.position, unitGameObject.transform.position))
+                    {
+                        distance = Vector3.Distance(mainBases[z].transform.position, unitGameObject.transform.position);
+                        curClosestBase = mainBases[z];
+                    }
+                }
+            }
+
+            return curClosestBase;
+        }
+    }
+
+
 }

@@ -34,20 +34,19 @@ public class UnitController : MonoBehaviour {
             ProgramChange(curProgram);
 	    }
         //! For updating the unit class when the curTeam is changed
-	    if (curTeam != "Neutral" && curTeam != ThisUnit._CurTeam)
+	    if (curTeam != ThisUnit._CurTeam)
 	    {
-	        ThisUnit._CurTeam = curTeam;
+	        curTeam = ThisUnit._CurTeam;
 	    }
         curTarget = ThisUnit.Shoot(curTarget);
 	    if (ThisUnit._UnitProgram == ProgramType.Guard)
 	    {
-            curClosestBaseNow = ThisUnit.Move(curTarget);
+            curClosestBaseNow = ThisUnit.Move(gameController, curTarget, gameObject);
 	    }
 	    else
 	    {
-            curClosestBaseNow = ThisUnit.Move(curClosestBaseNow);
+            curClosestBaseNow = ThisUnit.Move(gameController, curClosestBaseNow, gameObject);
 	    }
-        curClosestBaseNow = ThisUnit.Move(curClosestBaseNow);
         ThisUnit.Death();
 	}
 
