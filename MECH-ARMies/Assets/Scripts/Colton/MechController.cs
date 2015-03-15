@@ -16,11 +16,11 @@ public class MechController : MonoBehaviour
     //public GameOverMenuController gameOverMenuController;
 
     private float fireRate = 0.25f;
-    private float tranformRate = .25f;
+    //private float tranformRate = .25f;
     public int health = 5;
 
     private float nextFire;
-    private float nextTransform;
+    //private float nextTransform;
 
     //public Text gameOverText;
 
@@ -44,7 +44,7 @@ public class MechController : MonoBehaviour
 
         }
 
-        if (Input.GetButtonDown("Change") && Time.time > nextTransform)
+        if (Input.GetButtonDown("Change"))
         {
 
             SwitchPlayer();

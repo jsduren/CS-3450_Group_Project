@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class UnitMovement : MonoBehaviour {
 	Transform player2MainBase;
@@ -37,19 +38,25 @@ public class UnitMovement : MonoBehaviour {
 	}
 	
 	public Vector3 FindNearestBase(){
-		Vector3 closestBase = new Vector3(2000f,2000f,2000f);
-		float distance = 2000f;
-		for (int k = 0; k < smallBases.Length; k++) {
-			if (smallBases[k] != null && smallBases[k].GetComponent<SmallBaseAttributes>().currentTeam != GetComponent<ObjectAttributes>().currentTeam){
-				if (distance >= Vector3.Distance (smallBases[k].transform.position, gameObject.transform.position)){
-					distance = Vector3.Distance (smallBases[k].transform.position, gameObject.transform.position);
-					closestBase = smallBases[k].transform.position;
-					closestBaseNow = smallBases[k];
-				}
-			}
-		}
-		
-		for (int z = 0; z < mainBases.Length; z++) {
+		var closestBase = new Vector3(2000f,2000f,2000f);
+		var distance = 2000f;
+	    foreach (var t in smallBases)
+	    {
+	        if (t != null)
+	        {
+	            if (t.GetComponent<SmallBaseAttributes>().currentTeam != GetComponent<ObjectAttributes>().currentTeam)
+	            {
+	                if (distance >= Vector3.Distance(t.transform.position, gameObject.transform.position))
+	                {
+	                    distance = Vector3.Distance(t.transform.position, gameObject.transform.position);
+	                    closestBase = t.transform.position;
+	                    closestBaseNow = t;
+	                }
+	            }
+	        }
+	    }
+
+	    for (int z = 0; z < mainBases.Length; z++) {
 			if (mainBases[z] != null && mainBases[z].GetComponent<MainBaseAttributes>().currentTeam != GetComponent<ObjectAttributes>().currentTeam){
 				if (distance >= Vector3.Distance (mainBases[z].transform.position, gameObject.transform.position)){
 					distance = Vector3.Distance (mainBases[z].transform.position, gameObject.transform.position);
