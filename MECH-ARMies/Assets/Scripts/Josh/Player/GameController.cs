@@ -121,6 +121,7 @@ public class GameController : MonoBehaviour {
 
             return curClosestBase;
         }
+        return null;
     }
 
 

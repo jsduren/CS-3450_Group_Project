@@ -11,13 +11,13 @@ public class UnitController : MonoBehaviour {
     public string unitType;
     private string prevProgram;
     public string curProgram;
-    //private GameObject gameController;
+    private GameObject gameController;
     public GameObject curTarget;
     public GameObject curClosestBaseNow;
     // Use this for initialization
 	void Start ()
 	{
-	    //gameController = GameObject.FindGameObjectWithTag("GameController");
+	    gameController = GameObject.FindGameObjectWithTag("GameController");
 	    UnitInitialization(curTeam, unitType);
 	    ThisUnit._UnitGameObject = gameObject;
 	}

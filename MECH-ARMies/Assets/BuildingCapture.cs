@@ -21,7 +21,7 @@ public class BuildingCapture : MonoBehaviour
         if (other.GetComponent<UnitController>().ThisUnit._UnitType == UType.Infantry && 
             other.GetComponent<UnitController>().ThisUnit._UnitProgram == ProgramType.NearestBase)
         {
-            thisBaseComponent = gameObject.GetComponentInParent<UnitController>().ThisUnit.BaseCapture(other);
+            gameObject.GetComponentInParent<UnitController>().ThisUnit.BaseCapture(other.gameObject);
         }
     }
 
