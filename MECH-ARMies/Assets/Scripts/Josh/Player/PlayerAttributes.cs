@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class PlayerAttributes : MonoBehaviour {
+    /*
 	public int maxHealth;
 	private int currentHealth;
 	public int maxGuns;
@@ -11,12 +12,14 @@ public class PlayerAttributes : MonoBehaviour {
 	public int maxCargoSpace;
 	private int currentCargoSpace;
 	public GameObject currentCargo;
+     */
 	// Use this for initialization
 	void Start () {
+        /*
 		currentHealth = maxHealth;
 		currentGuns = maxGuns;
 		currentEnergy = maxEnergy;
-		currentCargoSpace = maxCargoSpace;
+		currentCargoSpace = maxCargoSpace;*/
 	}
 	
 	// Update is called once per frame

@@ -26,10 +26,10 @@ public class JetController : MonoBehaviour
     private List<GameObject> cargo = new List<GameObject>(); 
    
     private float fireRate = 0.25f;
-    private float tranformRate = .25f;
+    //private float transformRate = .25f;
 
     private float nextFire;
-    private float nextTransform;
+    //private float nextTransform;
 
 	AudioSource playerAudio;
 
@@ -51,7 +51,7 @@ public class JetController : MonoBehaviour
 
         }
 
-        if (Input.GetButtonDown("Change") && Time.time > nextTransform)
+        if (Input.GetButtonDown("Change"))
         {
 
             SwitchPlayer();
@@ -139,7 +139,7 @@ public class JetController : MonoBehaviour
         }
         else
         {
-            string error = "not enough room";
+            //string error = "not enough room";
         }
     }
 

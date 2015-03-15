@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class GameController : MonoBehaviour {
-	private bool gameOverPlayer1;
-	private bool gameOverPlayer2;
+	//private bool gameOverPlayer1;
+	//private bool gameOverPlayer2;
 	
 	public GameObject[] smallBases = new GameObject[9];
 	public GameObject[] mainBases = new GameObject[2];
@@ -14,8 +14,8 @@ public class GameController : MonoBehaviour {
 
     public GameObject enemyUnit;
 
-    public GameObject PlayerGameObject;
-    private Vector3 location = new Vector3(105, 34.5f, 105);
+    //public GameObject PlayerGameObject;
+    //private Vector3 location = new Vector3(105, 34.5f, 105);
 	
 	
 	//private MenuController _menuController;
@@ -23,7 +23,8 @@ public class GameController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//Make menuController
-        PlayerGameObject = (GameObject)Instantiate(PlayerGameObject, location, PlayerGameObject.transform.rotation);
+        /*
+        PlayerGameObject = (GameObject)Instantiate(PlayerGameObject, location, PlayerGameObject.transform.rotation);*/
 
 	    SpawnUnits();
 
@@ -40,8 +41,6 @@ public class GameController : MonoBehaviour {
 		}
 
 		//initialize other values
-		gameOverPlayer1 = false;
-		gameOverPlayer2 = false;
 		Player1Money = StartingMoney;
 		Player2Money = StartingMoney;
 		//Ship = (GameObject) Instantiate(Ship, location,Ship.transform.rotation);
@@ -54,9 +53,9 @@ public class GameController : MonoBehaviour {
         {
 			if (mainBases[x] != null && mainBases[x].GetComponent<MainBaseHealth>().isDead) {
 				if (mainBases[x].GetComponent<ObjectAttributes>().currentTeam == "Player1"){
-					gameOverPlayer1 = true;	
+					//Put success script here
 				}else{
-					gameOverPlayer2 = true;
+					//Put failure script here
 				}
 			}
 		}
