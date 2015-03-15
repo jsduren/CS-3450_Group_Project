@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 
 public class JetController : MonoBehaviour
 {
-    private const int cargoCapacity = 4;
+    private const int cargoCapacity = 1;
     private int cargoUsed = 0;
     public float speed;
 
@@ -16,8 +17,7 @@ public class JetController : MonoBehaviour
     public GameObject infantry;
     public GameObject turret;
 
-    
-	public float setVolume;
+    public float setVolume;
 	public AudioClip shotsFired;
     public GameObject shot;
     public Transform shootingOrigin1;
@@ -26,12 +26,19 @@ public class JetController : MonoBehaviour
     private List<GameObject> cargo = new List<GameObject>(); 
    
     private float fireRate = 0.25f;
-    //private float transformRate = .25f;
+    private float tranformRate = .25f;
 
     private float nextFire;
-    //private float nextTransform;
+    private float nextTransform;
 
 	AudioSource playerAudio;
+
+    private static Dictionary<UType, string> UtypeString = new Dictionary<UType, string>
+    {
+        {UType.Infantry, "Infantry"},
+        {UType.Jeep, "Humvee"},
+        {UType.Turret, "Turret"},
+    };
 
 	void Start()
 	{
@@ -51,15 +58,16 @@ public class JetController : MonoBehaviour
 
         }
 
-        if (Input.GetButtonDown("Change"))
+        if (Input.GetButtonDown("Change") && Time.time > nextTransform)
         {
 
             SwitchPlayer();
         }
 
-        if (Input.GetButtonDown("Cargo"))
+        if (Input.GetButtonDown("CargoDrop"))
         {
-            dropCargo(cargo);
+            if(cargoUsed == 1)
+                dropCargo(cargo);
         }
 
     }
@@ -113,25 +121,16 @@ public class JetController : MonoBehaviour
             switch (unit)
             {
                 case "Humvee":
-                    if ((cargoCapacity - cargoUsed) > 2)
-                    {
-                        cargo.Add(humvee);
-                        cargoUsed += 2;
-                    }
+                    cargo.Add(humvee);
+                    cargoUsed++;
                     break;
                 case "Infantry":
-                    if ((cargoCapacity - cargoUsed) > 1)
-                    {
-                        cargo.Add(infantry);
-                        cargoUsed += 1;
-                    }
+                    cargo.Add(infantry);
+                    cargoUsed ++;
                     break;
                 case "Turret":
-                    if ((cargoCapacity - cargoUsed) > 2)
-                    {
-                        cargo.Add(turret);
-                        cargoUsed += 2;
-                    }
+                    cargo.Add(turret);
+                    cargoUsed++;
                     break;
                 default:
                     break;
@@ -139,7 +138,7 @@ public class JetController : MonoBehaviour
         }
         else
         {
-            //string error = "not enough room";
+            string display = "not enough room";
         }
     }
 
@@ -154,19 +153,40 @@ public class JetController : MonoBehaviour
             float z = transform.position.z;
 
             Vector3 instantiation = new Vector3(x, y, z);
+            Vector3 movement = new Vector3(0,90,0);
+            Quaternion targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 
-            Instantiate(unit, instantiation, transform.rotation);
+            Instantiate(unit, movement, transform.rotation);
 
-            if (unit == infantry)
+            if (unit == turret)
+            {
+                Instantiate(unit, movement, targetRotation);
                 cargoUsed--;
+            }
             else
             {
-                cargoUsed -= 2;
+                Instantiate(unit, instantiation, transform.rotation);
+                cargoUsed --;
             }
 
             cargoUnits.Remove(unit);
 
         }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        GameObject cargo = other.gameObject;
+        
+        if (Input.GetButtonDown("CargoMove"))
+        {
+            if (UtypeString.ContainsValue(cargo.tag))
+            {
+                createCargo(cargo.tag);
+                Destroy(cargo);
+            }
+        }
+        
     }
 }
 

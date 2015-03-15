@@ -20,16 +20,18 @@ public class MenuController : MonoBehaviour
     public Texture turretPortarit;
     public Texture moveButton;
     public Texture guardButton;
-    private Texture[] portraits;
+    private Texture[] units;
     private Texture[] orders;
     private int[] unitCosts;
     private int[] orderCosts;
     private string[] unitText;
     private string[] orderText;
 
+   
+
     private void Start()
     {
-        portraits = new Texture[]
+        units = new Texture[]
         {
             infantryPortrait,
             vehiclePortrait,
@@ -100,14 +102,14 @@ public class MenuController : MonoBehaviour
             unitRightArrowButtonY + arrowButtonTopPadding,
             arrowButtonWidth,
             arrowButtonHeight), ">"))
-            unitIndex = Math.Min(1, unitIndex + 1);
+            unitIndex = Math.Min(units.Length-1, unitIndex+1);
            
 
         //put unit portrait texture in here
         var unitPortraitSkinX = unitLeftArrowButtonX + arrowButtonWidth + spacing;
         var unitPortraitSkinY = unitLeftArrowButtonY;
         var unitPortraitRect = new Rect(unitPortraitSkinX, unitPortraitSkinY, unitPortraitWidth, unitPortraitHeight);
-        GUI.DrawTexture(unitPortraitRect, portraits[unitIndex]);
+        GUI.DrawTexture(unitPortraitRect, units[unitIndex]);
 
         //put unit cost text here
         GUI.Label(new Rect(unitPortraitSkinX, unitPortraitSkinY + unitPortraitHeight + spacing, 200, 30),
@@ -132,7 +134,7 @@ public class MenuController : MonoBehaviour
             arrowButtonWidth,
             arrowButtonHeight), ">"))
         {
-            orderIndex = Math.Min(1, orderIndex + 1);
+            orderIndex = Math.Min(orders.Length-1, orderIndex +1 );
             print("You clicked the button!");
         }
 
