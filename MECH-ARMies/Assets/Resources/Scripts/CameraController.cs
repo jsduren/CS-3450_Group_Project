@@ -15,11 +15,14 @@ public class CameraController : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void LateUpdate ()
-	{
-	        Player = GameObject.FindGameObjectWithTag("Player");
-	        transform.position = Player.transform.position + offset;
-	}
+    private void LateUpdate()
+    {
+        Player = GameObject.FindGameObjectWithTag("Player");
+        if (Player != null)
+        {
+            transform.position = Player.transform.position + offset;
+        }
+    }
 
     //void changeview()
     //{

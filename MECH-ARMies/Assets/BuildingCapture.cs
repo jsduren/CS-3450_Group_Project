@@ -16,12 +16,20 @@ public class BuildingCapture : MonoBehaviour
 
 	}
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<UnitController>().ThisUnit._UnitType == UType.Infantry && 
-            other.GetComponent<UnitController>().ThisUnit._UnitProgram == ProgramType.NearestBase)
+        Debug.Log(other == null);
+        if (other.GetComponent<UnitController>() != null)
         {
-            gameObject.GetComponentInParent<UnitController>().ThisUnit.BaseCapture(other.gameObject);
+            Debug.Log(string.Format("OnTriggerEnter Triggered by: {0}", other));
+
+
+            if (other != null && other.GetComponent<UnitController>() != null &&
+                other.GetComponent<UnitController>().ThisUnit._UnitType == UType.Infantry &&
+                other.GetComponent<UnitController>().ThisUnit._UnitProgram == ProgramType.NearestBase)
+            {
+                gameObject.GetComponentInParent<UnitController>().ThisUnit.BaseCapture(other.gameObject);
+            }
         }
     }
 

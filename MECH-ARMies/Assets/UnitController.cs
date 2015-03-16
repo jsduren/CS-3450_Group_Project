@@ -14,12 +14,16 @@ public class UnitController : MonoBehaviour {
     private GameObject gameController;
     public GameObject curTarget;
     public GameObject curClosestBaseNow;
+    public bool TestTeamChangeToPlayer1 = false;
+    public bool TestTeamChangeToPlayer2 = false;
+    public bool teamChanging = false;
+    private bool isAwake = false;
     // Use this for initialization
 	void Start ()
 	{
 	    gameController = GameObject.FindGameObjectWithTag("GameController");
 	    UnitInitialization(curTeam, unitType);
-	    ThisUnit._UnitGameObject = gameObject;
+	    isAwake = true;
 	}
 	
 	// Update is called once per frame
@@ -31,21 +35,46 @@ public class UnitController : MonoBehaviour {
 	        prevProgram = curProgram;
             ProgramChange(curProgram);
 	    }
-        //! For updating the unit class when the curTeam is changed
-	    if (curTeam != ThisUnit._CurTeam)
+
+        if (TestTeamChangeToPlayer1)
 	    {
-	        curTeam = ThisUnit._CurTeam;
+	        curTeam = "Player1";
+	        TestTeamChangeToPlayer1 = false;
+            teamChanging = true;
 	    }
-        curTarget = ThisUnit.Shoot(curTarget);
-	    if (ThisUnit._UnitProgram == ProgramType.Guard)
+        if (TestTeamChangeToPlayer2)
+        {
+            curTeam = "Player2";
+            TestTeamChangeToPlayer2 = false;
+            teamChanging = true;
+        }
+
+	    
+	        //! For updating the unit class when the curTeam is changed
+        if (curTeam != null && ThisUnit._CurTeam != null && curTeam != ThisUnit._CurTeam)
 	    {
-            curClosestBaseNow = ThisUnit.Move(gameController, curTarget, gameObject);
+            curTeam = ThisUnit._CurTeam;
 	    }
-	    else
+        if (curTeam != null && ThisUnit._CurTeam != null && !teamChanging)
+        {
+	        curTarget = ThisUnit.Shoot(curTarget);
+            if (isAwake && ThisUnit._UnitProgram == ProgramType.Guard)
+	        {
+	            curClosestBaseNow = ThisUnit.Move(gameController, curTarget, gameObject.transform);
+	        }
+	        else
+	        {
+	            curClosestBaseNow = ThisUnit.Move(gameController, curClosestBaseNow, gameObject.transform);
+	            isAwake = false;
+	        }
+	        ThisUnit.Death();
+	    }
+	    if (curTeam != null && ThisUnit._CurTeam != null && curTeam == ThisUnit._CurTeam)
 	    {
-            curClosestBaseNow = ThisUnit.Move(gameController, curClosestBaseNow, gameObject);
+	        teamChanging = false;
 	    }
-        ThisUnit.Death();
+	        
+	    
 	}
 
     private void UnitInitialization(string team, string curUnit)
@@ -53,34 +82,34 @@ public class UnitController : MonoBehaviour {
         switch (curUnit)
         {
             case "Infantry":
-                ThisUnit = new Infantry(team, ProgramType.NearestBase);
+                ThisUnit = new Infantry(team, ProgramType.NearestBase, gameObject);
                 break;
             case "Jeep":
-                ThisUnit = new Jeep(team, ProgramType.NearestBase);
+                ThisUnit = new Jeep(team, ProgramType.NearestBase, gameObject);
                 break;
             case "Tank":
-                ThisUnit = new Tank(team, ProgramType.NearestBase);
+                ThisUnit = new Tank(team, ProgramType.NearestBase, gameObject);
                 break;
             case "SAM":
-                ThisUnit = new SAM(team, ProgramType.NearestBase);
+                ThisUnit = new SAM(team, ProgramType.NearestBase, gameObject);
                 break;
             case "Turret":
-                ThisUnit = new Turret(team, ProgramType.StandGround);
+                ThisUnit = new Turret(team, ProgramType.StandGround, gameObject);
                 break;
             case "MainBase":
-                ThisUnit = new MainBase(team, ProgramType.StandGround);
+                ThisUnit = new MainBase(team, ProgramType.StandGround, gameObject);
                 break;
             case "SmallBase":
-                ThisUnit = new SmallBase(team, ProgramType.NearestBase);
+                ThisUnit = new SmallBase(team, ProgramType.NearestBase, gameObject);
                 break;
             case "Shots":
-                ThisUnit = new Shots(team);
+                ThisUnit = new Shots(team, gameObject);
                 break;
             case "PlayerPlane":
-                ThisUnit = new PlayerPlane(team, ProgramType.StandGround);
+                ThisUnit = new PlayerPlane(team, ProgramType.StandGround, gameObject);
                 break;
             case "PlayerMech":
-                ThisUnit = new PlayerMech(team, ProgramType.StandGround);
+                ThisUnit = new PlayerMech(team, ProgramType.StandGround, gameObject);
                 break;
 
         }

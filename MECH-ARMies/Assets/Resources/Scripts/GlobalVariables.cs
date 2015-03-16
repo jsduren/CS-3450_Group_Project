@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEditor;
 
@@ -50,7 +51,7 @@ public abstract class Unit : Object
     public string _CurTeam { get; set; }
     public UType _UnitType { get; set; }
     public ProgramType _UnitProgram { get; set; }
-    
+
     public abstract bool _IsShootable { get; set; }
     public abstract bool _CanShoot { get; set; }
     public abstract bool _IsCapturable { get; set; }
@@ -94,34 +95,98 @@ public abstract class Unit : Object
         }
         return curTargetGameObject;
     }
-    public GameObject Move(GameObject gameContObject, GameObject curClosestGameObject, GameObject curUnitGameObject)
+
+    public GameObject Move(GameObject gameContObject, GameObject curClosestGameObject, Transform curUnitTransform)
     {
+        UnityEngine.Debug.Log("Running Move Function");
         if (_CanMove && !_IsDead && _UnitProgram != ProgramType.StandGround)
         {
-            if (curClosestGameObject.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam &&
-                !curClosestGameObject.GetComponent<UnitController>().ThisUnit._IsDead)
+            UnityEngine.Debug.Log("First If Statement, Can Move");
+            //if (curClosestGameObject.GetComponent<UnitController>() = null && curClosestGameObject.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam && !curClosestGameObject.GetComponent<UnitController>().ThisUnit._IsDead)
+            //{
+            switch (_UnitProgram)
             {
-                switch (_UnitProgram)
-                {
-                    case ProgramType.Guard:
+                case ProgramType.Guard:
 
-                        break;
-                    case ProgramType.NearestBase:
-                        curClosestGameObject = gameContObject.GetComponent<GameController>()
-                            .FindNearestBase(curClosestGameObject, curUnitGameObject);
-                        break;
+                    break;
+                case ProgramType.NearestBase:
+                    //NearestBase
 
-                    case ProgramType.AttackMain:
-                        curClosestGameObject = gameContObject.GetComponent<GameController>()
-                            .FindNearestBase(curClosestGameObject, curUnitGameObject);
-                        break;
+                    UnityEngine.Debug.Log("Nearest Base Case");
+                    UnityEngine.Debug.Log(string.Format("FindingNearestBase Function Ran"));
+                    {
+                        float distance = 4000f;
+                        GameObject tempClosestBase = null;
+                        //Debug.Log(string.Format("FindingNearestBase Function If UnitProgram is NearestBase"));
+                        for (int k = 0; k < gameContObject.GetComponent<GameController>().smallBases.Length; k++)
+                        {
+                            UnityEngine.Debug.Log(string.Format("Small Base Test: {0}", k));
+                            UnityEngine.Debug.Log(string.Format("Small Base Test if Null: {0}",
+                                gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>() == null));
+                            UnityEngine.Debug.Log(string.Format("Small Base Test if unitGame Object is Null: {0}",
+                                curUnitTransform == null));
+                            if (gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>() != null && _CurTeam != null && gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>().ThisUnit._CurTeam !=
+                                _CurTeam)
+                            {
+                                if (distance >=
+                                    Vector3.Distance(gameContObject.GetComponent<GameController>().smallBases[k].transform.position, curUnitTransform.position))
+                                {
+                                    distance = Vector3.Distance(gameContObject.GetComponent<GameController>().smallBases[k].transform.position,
+                                        curUnitTransform.position);
+                                    tempClosestBase = gameContObject.GetComponent<GameController>().smallBases[k];
+                                    UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", k));
+                                }
+                            }
+                        }
 
-                }
+
+                        for (int z = 0; z < gameContObject.GetComponent<GameController>().mainBases.Length; z++)
+                        {
+                            UnityEngine.Debug.Log(string.Format("Testing Main Base {0}", z));
+                            if (gameContObject.GetComponent<GameController>().mainBases[z].GetComponent<UnitController>() != null && _CurTeam != null && gameContObject.GetComponent<GameController>().mainBases[z].GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam)
+                            {
+                                if (distance >=
+                                    Vector3.Distance(gameContObject.GetComponent<GameController>().mainBases[z].transform.position, curUnitTransform.position))
+                                {
+                                    distance = Vector3.Distance(gameContObject.GetComponent<GameController>().mainBases[z].transform.position,
+                                        curUnitTransform.position);
+                                    tempClosestBase = gameContObject.GetComponent<GameController>().mainBases[z];
+                                    UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", z));
+                                }
+                            }
+                        }
+
+                        if (tempClosestBase != null)
+                        {
+                            UnityEngine.Debug.Log(string.Format("Closest Base Returned: {0}", tempClosestBase.transform.position));
+                        }
+
+                        curClosestGameObject = tempClosestBase;
+
+                        if (_UnitType == UType.Infantry && curClosestGameObject.GetComponent<UnitController>().ThisUnit._UnitType == UType.SmallBase)
+                        {
+                            _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(new Vector3(curClosestGameObject.transform.position.x + 10.2f, curClosestGameObject.transform.position.y, curClosestGameObject.transform.position.z + 10.2f));
+                        }
+                        else
+                        {
+                            _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(curClosestGameObject.transform.position);
+                        }
+
+                    }
+                    break; //NearestBase
+
+
+
+                case ProgramType.AttackMain:
+                    curClosestGameObject = gameContObject.GetComponent<GameController>()
+                        .FindNearestBase(_UnitGameObject);
+                    break;
+
             }
+            //}
         }
         return curClosestGameObject;
     }
-
     public void Death()
     {
         if (_IsDead)
@@ -147,8 +212,41 @@ public abstract class Unit : Object
                 {
                     DestroyObject(otherGameObject);
                     _Player1UnitCapture += 1;
+                    switch (_Player1UnitCapture)
+                    {
+                        case 1:
+                            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player1");
+                            break;
+                        case 2:
+                            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Player1");
+                            break;
+                        case 3:
+                            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Player1");
+                            break;
+                        case 4:
+                            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player1");
+                            break;
+                    }
+                    _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player1");
+
+
                     if (_Player2UnitCapture > 0)
                     {
+                        switch (_Player2UnitCapture)
+                        {
+                            case 1:
+                                _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Neutral");
+                                break;
+                            case 2:
+                                _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Neutral");
+                                break;
+                            case 3:
+                                _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Neutral");
+                                break;
+                            case 4:
+                                _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Neutral");
+                                break;
+                        }
                         _Player2UnitCapture -= 1;
                     }
                 }
@@ -159,14 +257,45 @@ public abstract class Unit : Object
                 {
                     DestroyObject(otherGameObject);
                     _Player2UnitCapture += 1;
+                    switch (_Player2UnitCapture)
+                    {
+                        case 1:
+                            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player2");
+                            break;
+                        case 2:
+                            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Player2");
+                            break;
+                        case 3:
+                            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Player2");
+                            break;
+                        case 4:
+                            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player2");
+                            break;
+                    }
                     if (_Player1UnitCapture > 0)
                     {
+                        switch (_Player1UnitCapture)
+                        {
+                            case 1:
+                                _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Neutral");
+                                break;
+                            case 2:
+                                _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Neutral");
+                                break;
+                            case 3:
+                                _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Neutral");
+                                break;
+                            case 4:
+                                _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Neutral");
+                                break;
+                        }
                         _Player1UnitCapture -= 1;
                     }
                 }
             }
             if (_Player1UnitCapture == 4)
             {
+                UnityEngine.Debug.Log("Building Captured for Player1");
                 _CurTeam = "Player1";
             }
             if (_Player2UnitCapture == 4)
@@ -177,7 +306,7 @@ public abstract class Unit : Object
     }
     public abstract GameObject _UnitGameObject { get; set; }
 
-    
+
 }
 
 // Infantry movement class
@@ -202,7 +331,7 @@ public sealed class Infantry : Unit
         ProgramType.NearestBase,
         ProgramType.AttackMain
     };
-    
+
     public Infantry()
     {
         _IsShootable = true;
@@ -219,14 +348,15 @@ public sealed class Infantry : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = null;
     }
 
-    public Infantry(string curTeam, ProgramType unitProgram, UType unitType = UType.Infantry, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public Infantry(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Infantry, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -244,12 +374,12 @@ public sealed class Infantry : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
-
+        _UnitGameObject = unitGameObject;
     }
 
     public override bool _IsShootable { get; set; }
@@ -275,7 +405,7 @@ public sealed class Infantry : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
@@ -317,14 +447,14 @@ public sealed class Jeep : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public Jeep(string curTeam, ProgramType unitProgram, UType unitType = UType.Jeep, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public Jeep(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Jeep, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -342,11 +472,12 @@ public sealed class Jeep : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -373,7 +504,7 @@ public sealed class Jeep : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
@@ -416,14 +547,14 @@ public sealed class Tank : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public Tank(string curTeam, ProgramType unitProgram, UType unitType = UType.Tank, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public Tank(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Tank, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -441,11 +572,12 @@ public sealed class Tank : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -472,7 +604,7 @@ public sealed class Tank : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
@@ -514,14 +646,14 @@ public sealed class SAM : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public SAM(string curTeam, ProgramType unitProgram, UType unitType = UType.SAM, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public SAM(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.SAM, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -539,11 +671,12 @@ public sealed class SAM : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = false;
+        _CanMove = true;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -570,7 +703,7 @@ public sealed class SAM : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
@@ -617,7 +750,7 @@ public sealed class Turret : Unit
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public Turret(string curTeam, ProgramType unitProgram, UType unitType = UType.Turret, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public Turret(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Turret, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -640,6 +773,7 @@ public sealed class Turret : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -666,7 +800,7 @@ public sealed class Turret : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
@@ -709,14 +843,14 @@ public sealed class SmallBase : Unit
         _CargoSpace = CargoSpace;
         _Cargo = Cargo;
         _UnitGameObject = null;
-        _CanMove = true;
+        _CanMove = false;
         _IsDead = false;
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public SmallBase(string curTeam, ProgramType unitProgram, UType unitType = UType.SmallBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public SmallBase(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.SmallBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -739,6 +873,33 @@ public sealed class SmallBase : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
+
+        if (_CurTeam == "Player1")
+        {
+            _Player1UnitCapture = 4;
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
+                .GetComponentInChildren<Sphere1>()
+                .ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
+                .GetComponentInChildren<Sphere2>()
+                .ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
+                .GetComponentInChildren<Sphere3>()
+                .ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
+                .GetComponentInChildren<Sphere4>()
+                .ColorCaptured("Player1");
+        }
+
+        if (_CurTeam == "Player2")
+        {
+            _Player2UnitCapture = 4;
+            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player2");
+            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Player2");
+            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Player2");
+            _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player2");
+        }
 
     }
 
@@ -815,7 +976,7 @@ public sealed class MainBase : Unit
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public MainBase(string curTeam, ProgramType unitProgram, UType unitType = UType.MainBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public MainBase(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.MainBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -838,6 +999,7 @@ public sealed class MainBase : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
     }
 
     public override bool _IsShootable { get; set; }
@@ -912,7 +1074,7 @@ public sealed class Shots : Unit
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public Shots(string curTeam, ProgramType unitProgram = ProgramType.ShotFired, UType unitType = UType.Shots, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public Shots(string curTeam, GameObject unitGameObject, ProgramType unitProgram = ProgramType.ShotFired, UType unitType = UType.Shots, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -935,6 +1097,7 @@ public sealed class Shots : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -1011,7 +1174,7 @@ public sealed class PlayerPlane : Unit
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public PlayerPlane(string curTeam, ProgramType unitProgram, UType unitType = UType.PlayerPlane, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public PlayerPlane(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.PlayerPlane, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -1034,6 +1197,7 @@ public sealed class PlayerPlane : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -1109,7 +1273,7 @@ public sealed class PlayerMech : Unit
         _PossiblePrograms = PossibleProgTypes;
     }
 
-    public PlayerMech(string curTeam, ProgramType unitProgram, UType unitType = UType.PlayerMech, int life = MaxUnitLife, int energy = MaxUnitEnergy,
+    public PlayerMech(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.PlayerMech, int life = MaxUnitLife, int energy = MaxUnitEnergy,
         int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
@@ -1132,6 +1296,7 @@ public sealed class PlayerMech : Unit
         _Cost = Cost;
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
+        _UnitGameObject = unitGameObject;
 
     }
 
@@ -1158,20 +1323,23 @@ public sealed class PlayerMech : Unit
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
     public override GameObject[] _Cargo { get; set; }
-    
+
     public override GameObject _UnitGameObject { get; set; }
 }
 
 
-public class GlobalVariables : MonoBehaviour {
-    
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+public class GlobalVariables : MonoBehaviour
+{
+
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }
