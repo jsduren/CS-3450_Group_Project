@@ -46,11 +46,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Shaders\Josh\Hard Surface Free\Editor\Reset Fresnel Reflection Value.cs" />
-     <None Include="Assets\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
-     <None Include="Assets\Turret\Shaders\AlphaTest_Complete.shader" />
-     <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
-     <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
+     <Compile Include="Assets\Shaders\Hard Surface Free\Editor\Reset Fresnel Reflection Value.cs" />
+     <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
+     <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
+     <None Include="Assets\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
+     <None Include="Assets\Resources\Prefabs\Cartoon Soldier\Readme.txt" />
  <Reference Include="Assembly-UnityScript">
  <HintPath>C:/Users/Connor/Documents/GitHub/CS-3540_Group_Project/MECH-ARMies/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
  </Reference>
