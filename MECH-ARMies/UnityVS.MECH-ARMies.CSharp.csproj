@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{95808B7A-8578-BD11-DB91-881EC23C2988}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace></RootNamespace>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Unity Web v3.5</TargetFrameworkProfile>
+    <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectType>Game:1</UnityProjectType>
+    <UnityBuildTarget>WebPlayer:6</UnityBuildTarget>
+    <UnityVersion>4.6.3f1</UnityVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Debug\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;TRACE;UNITY_4_6_3;UNITY_4_6;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\UnityVS_bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>TRACE;UNITY_4_6_3;UNITY_4_6;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="Boo.Lang" />
+    <Reference Include="UnityScript.Lang" />
+    <Reference Include="UnityEngine">
+      <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\BuildingCapture.cs" />
+    <Compile Include="Assets\DestroyByTime.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\Detonator.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorCloudRing.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorComponent.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorFireball.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorForce.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorGlow.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorHeatwave.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorLight.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorShockwave.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorSmoke.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorSound.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorSparks.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorSpray.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\TestScene\DetonatorTest.cs" />
+    <Compile Include="Assets\Models\Detonator Explosion Framework\TestScene\TouchToMouse.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\PseudoVolumetricExplosion.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\ExploderComponent.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\LightComponent.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\ParticleComponent.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\PseudoVolumetricComponent.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\VolumetricComponent.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\effects\exploderComponents\VolumetricComponent2D.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\exploders\Exploder.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\exploders\Exploder2D.cs" />
+    <Compile Include="Assets\Models\True Explosions\System\Scripts\exploders\SphereExploder.cs" />
+    <Compile Include="Assets\ObjectAttributes.cs" />
+    <Compile Include="Assets\Player1UnitCapture.cs" />
+    <Compile Include="Assets\Player2UnitCapture.cs" />
+    <Compile Include="Assets\Resources\Scripts\Base Scripts\MainBaseAttributes.cs" />
+    <Compile Include="Assets\Resources\Scripts\Base Scripts\MainBaseHealth.cs" />
+    <Compile Include="Assets\Resources\Scripts\Base Scripts\RegenNPickUp.cs" />
+    <Compile Include="Assets\Resources\Scripts\Base Scripts\SmallBaseAttributes.cs" />
+    <Compile Include="Assets\Resources\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Resources\Scripts\DestroyByContact.cs" />
+    <Compile Include="Assets\Resources\Scripts\GlobalVariables.cs" />
+    <Compile Include="Assets\Resources\Scripts\JetController.cs" />
+    <Compile Include="Assets\Resources\Scripts\MechController.cs" />
+    <Compile Include="Assets\Resources\Scripts\MenuController.cs" />
+    <Compile Include="Assets\Resources\Scripts\MouseLook.cs" />
+    <Compile Include="Assets\Resources\Scripts\Non-Passable\NonPassable.cs" />
+    <Compile Include="Assets\Resources\Scripts\Player\GameController.cs" />
+    <Compile Include="Assets\Resources\Scripts\Player\PlayerAttributes.cs" />
+    <Compile Include="Assets\Resources\Scripts\RemoveShots.cs" />
+    <Compile Include="Assets\Resources\Scripts\Respwan.cs" />
+    <Compile Include="Assets\Resources\Scripts\Shooting.cs" />
+    <Compile Include="Assets\Resources\Scripts\enemyAIscript.cs" />
+    <Compile Include="Assets\Sphere1.cs" />
+    <Compile Include="Assets\Sphere2.cs" />
+    <Compile Include="Assets\Sphere3.cs" />
+    <Compile Include="Assets\Sphere4.cs" />
+    <Compile Include="Assets\Terrain\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
+    <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
+    <Compile Include="Assets\UnitController.cs" />
+    <Compile Include="Assets\UnitMovement.cs" />
+    <Compile Include="Assets\UnitShooting.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
+    <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
+    <None Include="Assets\Resources\Prefabs\Cartoon Soldier\Readme.txt" />
+    <None Include="Assets\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
+</Project>

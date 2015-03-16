@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_6_2;UNITY_4_6;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_6_3;UNITY_4_6;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -46,101 +46,60 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\CharacterMotor.js" />
-     <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\FPSInputController.js" />
-     <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\PlatformInputController.js" />
-     <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\ThirdPersonCamera.js" />
-     <Compile Include="Assets\Controllers\Josh\Character Controllers\Sources\Scripts\ThirdPersonController.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\autoDestroy.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\bulletHoleProperty.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\externalCamera.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\fadeParticles.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\flyingSpark.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\game.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\health.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\laserSight\laserDust.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\laserSight\laserLine.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\laserSight\laserPoint.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\laserSight\laserSight.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\particleAutoDestroy.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\platform.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\shadow.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\spark.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\Misc\triggerChildrenCollider.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletCase.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletCaseGenerator.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletHole.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletHoleHeat.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletTrace.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\bulletTraceGenerator.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\dustCloud.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\dustCloudGenerator.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\gun.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\gunSelector.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\muzzleFlash.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\guns\muzzleFlashGenerator.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\ik\ikArmController.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\ik\inverseKinematics.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\sentryGun\sentryGun.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\sentryGun\spinningTurret.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\crosshair.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\crouchController.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\skeletonToCharacter.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\smoothWorldPosition.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierAim.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierAnimation.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierCamera.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierLOD.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\soldierMovement.js" />
-     <Compile Include="Assets\Prefab\Josh\Cartoon Soldier\Scripts\soldier\weaponController.js" />
-     <Compile Include="Assets\Prefab\Josh\omega_fighter_01\script\NewBehaviourScript.js" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Bump.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent Specular.shader" />
-     <None Include="Assets\Terrain\Josh\Forest Grounds - Terrain Texture Pack\Readme.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Bump.shader" />
-     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionHigh.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Bump.shader" />
-     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Explosion.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Diffuse.shader" />
-     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionLow.shader" />
-     <None Include="Assets\Models\Josh\PorglezompPyroclastics\Shaders\ExplosionMed.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Diffuse.shader" />
-     <None Include="Assets\Terrain\Josh\Skyboxes\_skybox info.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Bump.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent.shader" />
-     <None Include="Assets\Prefab\Josh\Mobility_01_Free_v2\Mobility_Free_Unity_Info.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Diffuse.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Transparent Diffuse.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Diffuse.shader" />
-     <None Include="Assets\Prefab\Josh\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Diffuse.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Specular.shader" />
-     <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Bump.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Opaque Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Bump.shader" />
-     <None Include="Assets\Audio\Josh\3 Leaf Productions - Audio Pack\rock-wood sfx(mini pack)\ReadMe.txt" />
-     <None Include="Assets\Prefab\Josh\Mine-resistant armored vehicle\license.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent Diffuse.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Cut Out Opaque Diffuse.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Transparent Bump.shader" />
-     <None Include="Assets\Models\Josh\Detonator Explosion Framework\Resources\Detonator\Textures\HeatDistort.shader" />
-     <None Include="Assets\Models\Josh\PorglezompPyroclastics\README.txt" />
-     <None Include="Assets\Models\Josh\True Explosions\System\Shaders\SphereVolumetricExplosion.shader" />
-     <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Cut Out Bump.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface Free Opaque Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurfacePro Hidden Front Opaque Specular.shader" />
-     <None Include="Assets\Shaders\Josh\Hard Surface Free\HardSurface Shaders\HardSurface SFX Depth Write Only.shader" />
-     <None Include="Assets\Prefab\Josh\ShmupShipSample\readme.txt" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\autoDestroy.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\bulletHoleProperty.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\externalCamera.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\fadeParticles.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\flyingSpark.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\game.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\health.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\laserSight\laserDust.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\laserSight\laserLine.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\laserSight\laserPoint.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\laserSight\laserSight.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\particleAutoDestroy.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\platform.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\shadow.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\spark.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\Misc\triggerChildrenCollider.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletCase.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletCaseGenerator.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletHole.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletHoleHeat.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletTrace.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\bulletTraceGenerator.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\dustCloud.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\dustCloudGenerator.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\gun.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\gunSelector.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\muzzleFlash.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\guns\muzzleFlashGenerator.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\ik\ikArmController.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\ik\inverseKinematics.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\sentryGun\sentryGun.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\sentryGun\spinningTurret.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\crosshair.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\crouchController.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\skeletonToCharacter.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\smoothWorldPosition.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\soldierAim.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\soldierAnimation.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\soldierCamera.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\soldierLOD.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\soldierMovement.js" />
+     <Compile Include="Assets\Resources\Prefabs\Cartoon Soldier\Scripts\soldier\weaponController.js" />
+     <Compile Include="Assets\Resources\Prefabs\omega_fighter_01\script\NewBehaviourScript.js" />
+     <Compile Include="Assets\Resources\Scripts\CharacterMotor.js" />
+     <Compile Include="Assets\Resources\Scripts\Controllers\FPSInputController.js" />
+     <Compile Include="Assets\Resources\Scripts\Controllers\PlatformInputController.js" />
+     <Compile Include="Assets\Resources\Scripts\Controllers\ThirdPersonController.js" />
+     <Compile Include="Assets\Resources\Scripts\ThirdPersonCamera.js" />
+     <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
+     <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
+     <None Include="Assets\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
+     <None Include="Assets\Resources\Prefabs\Cartoon Soldier\Readme.txt" />
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.2/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.3/UnityEngine.UI.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
