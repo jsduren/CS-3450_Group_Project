@@ -2,7 +2,15 @@ fileFormatVersion: 2
 guid: 6e2c626005b276747bbf302f08ad005d
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mech: {fileID: 141596, guid: 0a02d7aff8f323f45946eb2983c7bd09, type: 2}
+  - humvee: {fileID: 188774, guid: b3ab5c5dee0b3bf4aba015cba4bc2b6e, type: 2}
+  - infantry: {fileID: 192160, guid: 9a71e6f313727dc4c9901a7aee63af71, type: 2}
+  - turret: {fileID: 147046, guid: 6415ae5e7cbd20f48aea7318197bef9c, type: 2}
+  - shotsFired: {fileID: 8300000, guid: efbe8f0d416f51b4dbdf5edcb04d7f98, type: 3}
+  - shot: {fileID: 192704, guid: ebe21df4aeeb03943a95eca7cbf97006, type: 2}
+  - shootingOrigin1: {instanceID: 0}
+  - shootingOrigin2: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

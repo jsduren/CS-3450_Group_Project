@@ -100,6 +100,7 @@
      <Compile Include="Assets\UnitController.cs" />
      <Compile Include="Assets\UnitMovement.cs" />
      <Compile Include="Assets\UnitShooting.cs" />
+     <None Include="Assets\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
      <None Include="Assets\Turret\Shaders\AlphaTest_Complete.shader" />
      <None Include="Assets\Terrain\Josh\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Prefab\Josh\Cartoon Soldier\Readme.txt" />

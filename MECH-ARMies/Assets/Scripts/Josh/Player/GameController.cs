@@ -11,22 +11,9 @@ public class GameController : MonoBehaviour {
 	public int Player2Money;
 	public int StartingMoney;
 	public GameObject MenuController;
-
-    public GameObject enemyUnit;
-
-    //public GameObject PlayerGameObject;
-    //private Vector3 location = new Vector3(105, 34.5f, 105);
-	
-	
-	//private MenuController _menuController;
 	
 	// Use this for initialization
 	void Start () {
-		//Make menuController
-        /*
-        PlayerGameObject = (GameObject)Instantiate(PlayerGameObject, location, PlayerGameObject.transform.rotation);*/
-
-	    SpawnUnits();
 
 		Instantiate(MenuController);
 
@@ -70,15 +57,6 @@ public class GameController : MonoBehaviour {
 
 
 	}
-
-    void SpawnUnits()
-    {
-        var spawnLocs = GameObject.FindGameObjectsWithTag("SpawnPoint");
-        foreach (var loc in spawnLocs)
-        {
-            Instantiate(enemyUnit, loc.transform.position, enemyUnit.transform.rotation);
-        }
-    }
 
     public GameObject FindNearestBase(GameObject curClosestBase, GameObject unitGameObject)
     {

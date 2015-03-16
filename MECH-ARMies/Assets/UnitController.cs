@@ -108,5 +108,10 @@ public class UnitController : MonoBehaviour {
         }
     }
 
+    public void InflictDamage(int damage)
+    {
+        //
+    }
+
 
 }

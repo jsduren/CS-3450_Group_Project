@@ -31,6 +31,8 @@ public class JetController : MonoBehaviour
     private float nextFire;
     private float nextTransform;
 
+    public string currentTeam;
+
 	AudioSource playerAudio;
 
     private static Dictionary<UType, string> UtypeString = new Dictionary<UType, string>
@@ -43,6 +45,7 @@ public class JetController : MonoBehaviour
 	void Start()
 	{
 		playerAudio = GetComponent<AudioSource> ();
+	    currentTeam = "Team1";
 	}
 
     void Update()
@@ -156,11 +159,10 @@ public class JetController : MonoBehaviour
             Vector3 movement = new Vector3(0,90,0);
             Quaternion targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 
-            Instantiate(unit, movement, transform.rotation);
-
+           
             if (unit == turret)
             {
-                Instantiate(unit, movement, targetRotation);
+                Instantiate(unit, instantiation, targetRotation);
                 cargoUsed--;
             }
             else
