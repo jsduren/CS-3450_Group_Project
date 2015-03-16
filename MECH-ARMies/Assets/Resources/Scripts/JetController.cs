@@ -29,6 +29,8 @@ public class JetController : MonoBehaviour
     private float nextFire;
     AudioSource playerAudio;
 
+    private Component[] shotingOrigins;
+
     public string currentTeam;
 
     private static Dictionary<UType, string> UtypeString = new Dictionary<UType, string>
@@ -38,6 +40,7 @@ public class JetController : MonoBehaviour
         {UType.Turret, "Turret"},
     };
 
+
     void Start()
     {
         mech = (GameObject)Resources.Load("Prefabs/Mech");
@@ -46,8 +49,11 @@ public class JetController : MonoBehaviour
         turret = (GameObject)Resources.Load("Prefabs/Turret");
         shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
         shot = (GameObject)Resources.Load("Prefabs/Shot1");
-        shootingOrigin1 = gameObject.transform;
-        shootingOrigin2 = gameObject.transform;
+
+        shotingOrigins = gameObject.GetComponentsInChildren(typeof (Collider));
+
+        shootingOrigin1 = shotingOrigins[2].transform;
+        shootingOrigin2 = shotingOrigins[3].transform;
 
         playerAudio = GetComponent<AudioSource>();
 

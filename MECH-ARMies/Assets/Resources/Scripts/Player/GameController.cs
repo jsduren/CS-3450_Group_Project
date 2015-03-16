@@ -11,7 +11,10 @@ public class GameController : MonoBehaviour {
 	public int Player2Money;
 	public int StartingMoney;
 	public GameObject MenuController;
+    public GameObject Ship;
 	
+    Vector3 shipspawn = new Vector3(105.0f, 35.0f, 105.0f);
+
 	// Use this for initialization
 	void Start () {
 
@@ -30,7 +33,7 @@ public class GameController : MonoBehaviour {
 		//initialize other values
 		Player1Money = StartingMoney;
 		Player2Money = StartingMoney;
-		//Ship = (GameObject) Instantiate(Ship, location,Ship.transform.rotation);
+		Ship = (GameObject) Instantiate(Ship, shipspawn, Ship.transform.rotation);
 	}
 	
 	// Update is called once per frame
