@@ -14,9 +14,6 @@ public class UnitController : MonoBehaviour {
     private GameObject gameController;
     public GameObject curTarget;
     public GameObject curClosestBaseNow;
-    public bool TestTeamChangeToPlayer1 = false;
-    public bool TestTeamChangeToPlayer2 = false;
-    public bool teamChanging = false;
     private bool isAwake = false;
     // Use this for initialization
 	void Start ()
@@ -36,26 +33,14 @@ public class UnitController : MonoBehaviour {
             ProgramChange(curProgram);
 	    }
 
-        if (TestTeamChangeToPlayer1)
-	    {
-	        curTeam = "Player1";
-	        TestTeamChangeToPlayer1 = false;
-            teamChanging = true;
-	    }
-        if (TestTeamChangeToPlayer2)
-        {
-            curTeam = "Player2";
-            TestTeamChangeToPlayer2 = false;
-            teamChanging = true;
-        }
+	    ThisUnit._CurrentTransform = gameObject.transform;
 
-	    
-	        //! For updating the unit class when the curTeam is changed
+        //! For updating the unit class when the curTeam is changed
         if (curTeam != null && ThisUnit._CurTeam != null && curTeam != ThisUnit._CurTeam)
 	    {
             curTeam = ThisUnit._CurTeam;
 	    }
-        if (curTeam != null && ThisUnit._CurTeam != null && !teamChanging)
+        if (curTeam != null && ThisUnit._CurTeam != null)
         {
 	        curTarget = ThisUnit.Shoot(curTarget);
             if (isAwake && ThisUnit._UnitProgram == ProgramType.Guard)
@@ -69,12 +54,6 @@ public class UnitController : MonoBehaviour {
 	        }
 	        ThisUnit.Death();
 	    }
-	    if (curTeam != null && ThisUnit._CurTeam != null && curTeam == ThisUnit._CurTeam)
-	    {
-	        teamChanging = false;
-	    }
-	        
-	    
 	}
 
     private void UnitInitialization(string team, string curUnit)
@@ -82,16 +61,43 @@ public class UnitController : MonoBehaviour {
         switch (curUnit)
         {
             case "Infantry":
-                ThisUnit = new Infantry(team, ProgramType.NearestBase, gameObject);
+                ThisUnit = new Infantry(team, ProgramType.NearestBase, gameObject)
+                {
+                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
+                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
+                    _CurrentTransform = gameObject.transform,
+                    _DropTransform = gameObject.transform,
+                    _Nav = gameObject.GetComponent<NavMeshAgent>()
+                };
                 break;
             case "Jeep":
-                ThisUnit = new Jeep(team, ProgramType.NearestBase, gameObject);
+                ThisUnit = new Jeep(team, ProgramType.NearestBase, gameObject)
+                {
+                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
+                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
+                    _CurrentTransform = gameObject.transform,
+                    _DropTransform = gameObject.transform,
+                    _Nav = gameObject.GetComponent<NavMeshAgent>()
+                };
                 break;
             case "Tank":
-                ThisUnit = new Tank(team, ProgramType.NearestBase, gameObject);
+                ThisUnit = new Tank(team, ProgramType.NearestBase, gameObject)
+                {
+                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
+                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
+                    _DropTransform = gameObject.transform,
+                    _Nav = gameObject.GetComponent<NavMeshAgent>()
+                };
                 break;
             case "SAM":
-                ThisUnit = new SAM(team, ProgramType.NearestBase, gameObject);
+                ThisUnit = new SAM(team, ProgramType.NearestBase, gameObject)
+                {
+                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
+                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
+                    _CurrentTransform = gameObject.transform,
+                    _DropTransform = gameObject.transform,
+                    _Nav = gameObject.GetComponent<NavMeshAgent>()
+                };
                 break;
             case "Turret":
                 ThisUnit = new Turret(team, ProgramType.StandGround, gameObject);

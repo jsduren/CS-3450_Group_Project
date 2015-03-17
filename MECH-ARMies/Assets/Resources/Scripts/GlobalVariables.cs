@@ -74,6 +74,17 @@ public abstract class Unit : Object
     public abstract int _MissileAttackDamage { get; set; }
     public abstract int _CargoSpaceOfUnit { get; set; }
     public abstract int _CargoSpace { get; set; }
+    
+    public abstract GameObject[] _SmallBaseArray { get; set; }
+    public abstract GameObject[] _MainBaseArray { get; set; }
+    public abstract Transform _CurrentTransform { get; set; }
+    public abstract Transform _DropTransform { get; set; }
+    public abstract GameObject _CurTarget { get; set; }
+    public abstract GameObject _CurDestination { get; set; }
+    public abstract NavMeshAgent _Nav { get; set; }
+    public abstract AreaLightColor[] _AreaLightsArray { get; set; }
+    public abstract MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public abstract GameObject[] _Cargo { get; set; }
 
     public void TakeDamage(int damageAmount)
@@ -101,7 +112,7 @@ public abstract class Unit : Object
         UnityEngine.Debug.Log("Running Move Function");
         if (_CanMove && !_IsDead && _UnitProgram != ProgramType.StandGround)
         {
-            UnityEngine.Debug.Log("First If Statement, Can Move");
+            //UnityEngine.Debug.Log("First If Statement, Can Move");
             //if (curClosestGameObject.GetComponent<UnitController>() = null && curClosestGameObject.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam && !curClosestGameObject.GetComponent<UnitController>().ThisUnit._IsDead)
             //{
             switch (_UnitProgram)
@@ -112,64 +123,61 @@ public abstract class Unit : Object
                 case ProgramType.NearestBase:
                     //NearestBase
 
-                    UnityEngine.Debug.Log("Nearest Base Case");
-                    UnityEngine.Debug.Log(string.Format("FindingNearestBase Function Ran"));
+                    //UnityEngine.Debug.Log("Nearest Base Case");
+                    //UnityEngine.Debug.Log(string.Format("FindingNearestBase Function Ran"));
                     {
                         float distance = 4000f;
                         GameObject tempClosestBase = null;
                         //Debug.Log(string.Format("FindingNearestBase Function If UnitProgram is NearestBase"));
-                        for (int k = 0; k < gameContObject.GetComponent<GameController>().smallBases.Length; k++)
+                        for (int k = 0; k < _SmallBaseArray.Length; k++)
                         {
-                            UnityEngine.Debug.Log(string.Format("Small Base Test: {0}", k));
-                            UnityEngine.Debug.Log(string.Format("Small Base Test if Null: {0}",
-                                gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>() == null));
-                            UnityEngine.Debug.Log(string.Format("Small Base Test if unitGame Object is Null: {0}",
-                                curUnitTransform == null));
-                            if (gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>() != null && _CurTeam != null && gameContObject.GetComponent<GameController>().smallBases[k].GetComponent<UnitController>().ThisUnit._CurTeam !=
-                                _CurTeam)
+                            //UnityEngine.Debug.Log(string.Format("Small Base Test: {0}", k));
+                           // UnityEngine.Debug.Log(string.Format("Small Base Test if Null: {0}",_SmallBaseArray[k].GetComponent<UnitController>() == null));
+                            //UnityEngine.Debug.Log(string.Format("Small Base Test if unitGame Object is Null: {0}",_CurrentTransform == null));
+                            if (_SmallBaseArray[k].GetComponent<UnitController>() != null && _CurTeam != null && _SmallBaseArray[k].GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam)
                             {
                                 if (distance >=
-                                    Vector3.Distance(gameContObject.GetComponent<GameController>().smallBases[k].transform.position, curUnitTransform.position))
+                                    Vector3.Distance(_SmallBaseArray[k].transform.position, _CurrentTransform.position))
                                 {
                                     distance = Vector3.Distance(gameContObject.GetComponent<GameController>().smallBases[k].transform.position,
-                                        curUnitTransform.position);
-                                    tempClosestBase = gameContObject.GetComponent<GameController>().smallBases[k];
-                                    UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", k));
+                                        _CurrentTransform.position);
+                                    tempClosestBase = _SmallBaseArray[k];
+                                    //UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", k));
                                 }
                             }
                         }
 
 
-                        for (int z = 0; z < gameContObject.GetComponent<GameController>().mainBases.Length; z++)
+                        for (int z = 0; z < _MainBaseArray.Length; z++)
                         {
-                            UnityEngine.Debug.Log(string.Format("Testing Main Base {0}", z));
-                            if (gameContObject.GetComponent<GameController>().mainBases[z].GetComponent<UnitController>() != null && _CurTeam != null && gameContObject.GetComponent<GameController>().mainBases[z].GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam)
+                            //UnityEngine.Debug.Log(string.Format("Testing Main Base {0}", z));
+                            if (_MainBaseArray[z].GetComponent<UnitController>() != null && _CurTeam != null && _MainBaseArray[z].GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam)
                             {
                                 if (distance >=
-                                    Vector3.Distance(gameContObject.GetComponent<GameController>().mainBases[z].transform.position, curUnitTransform.position))
+                                    Vector3.Distance(gameContObject.GetComponent<GameController>().mainBases[z].transform.position, _CurrentTransform.position))
                                 {
-                                    distance = Vector3.Distance(gameContObject.GetComponent<GameController>().mainBases[z].transform.position,
-                                        curUnitTransform.position);
-                                    tempClosestBase = gameContObject.GetComponent<GameController>().mainBases[z];
-                                    UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", z));
+                                    distance = Vector3.Distance(_MainBaseArray[z].transform.position,
+                                        _CurrentTransform.position);
+                                    tempClosestBase = _MainBaseArray[z];
+                                    //UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", z));
                                 }
                             }
                         }
 
                         if (tempClosestBase != null)
                         {
-                            UnityEngine.Debug.Log(string.Format("Closest Base Returned: {0}", tempClosestBase.transform.position));
+                            //UnityEngine.Debug.Log(string.Format("Closest Base Returned: {0}", tempClosestBase.transform.position));
                         }
 
                         curClosestGameObject = tempClosestBase;
 
                         if (_UnitType == UType.Infantry && curClosestGameObject.GetComponent<UnitController>().ThisUnit._UnitType == UType.SmallBase)
                         {
-                            _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(new Vector3(curClosestGameObject.transform.position.x + 10.2f, curClosestGameObject.transform.position.y, curClosestGameObject.transform.position.z + 10.2f));
+                            _Nav.SetDestination(new Vector3(curClosestGameObject.transform.position.x + 10.2f, curClosestGameObject.transform.position.y, curClosestGameObject.transform.position.z + 10.2f));
                         }
                         else
                         {
-                            _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(curClosestGameObject.transform.position);
+                            _Nav.SetDestination(curClosestGameObject.transform.position);
                         }
 
                     }
@@ -202,16 +210,27 @@ public abstract class Unit : Object
 
     }
 
+    /// <summary>
+    /// Bases the capture.
+    /// </summary>
+    /// <param name="otherGameObject">The other game object.</param>
     public void BaseCapture(GameObject otherGameObject)
     {
+        // Tests if Current Unit is a SmallBase
         if (_UnitType == UType.SmallBase)
         {
+            // Tests if the unit that entered the base is on Player1's Team 
             if (otherGameObject.GetComponent<UnitController>().ThisUnit._CurTeam == "Player1")
             {
+                // Tests if the # of units in the base is less than 4
                 if (_Player1UnitCapture < 4)
                 {
+                    // Removes the infantry unit that entered the base
                     DestroyObject(otherGameObject);
+                    // Increments the _Player1UnitCapture
                     _Player1UnitCapture += 1;
+
+                    // Switch is used to change the color of the Spheres that indicate the # of units for Player1 are in the base
                     switch (_Player1UnitCapture)
                     {
                         case 1:
@@ -227,11 +246,11 @@ public abstract class Unit : Object
                             _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player1");
                             break;
                     }
-                    _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player1");
-
-
+                    
+                    // Tests if Player2 has any units in the base
                     if (_Player2UnitCapture > 0)
                     {
+                        // Changes the Spheres for Player 2 back to a Neutral color to show how many units are needed to recapture/prevent capture
                         switch (_Player2UnitCapture)
                         {
                             case 1:
@@ -247,16 +266,21 @@ public abstract class Unit : Object
                                 _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Neutral");
                                 break;
                         }
+                        // Decrements _PLayer2UnitCapture
                         _Player2UnitCapture -= 1;
                     }
                 }
             }
-            else
+            else // Since the Unit isn't for Player1 then it figures it must be Player2's Infantry Unit
             {
+                // Tests if the # of units in the base is less than 4
                 if (_Player2UnitCapture < 4)
                 {
+                    // Removes the infantry unit that entered the base
                     DestroyObject(otherGameObject);
+                    // Increments the _Player2UnitCapture
                     _Player2UnitCapture += 1;
+                    // Switch is used to change the color of the Spheres that indicate the # of units for Player2 are in the base
                     switch (_Player2UnitCapture)
                     {
                         case 1:
@@ -272,8 +296,10 @@ public abstract class Unit : Object
                             _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player2");
                             break;
                     }
+                    // Tests if Player1 has any units in the base
                     if (_Player1UnitCapture > 0)
                     {
+                        // Changes the Spheres for Player1 back to a Neutral color to show how many units are needed to recapture/prevent capture
                         switch (_Player1UnitCapture)
                         {
                             case 1:
@@ -289,18 +315,33 @@ public abstract class Unit : Object
                                 _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Neutral");
                                 break;
                         }
+                        // Decrements _Player1UnitCapture
                         _Player1UnitCapture -= 1;
                     }
                 }
             }
+            // When _Player1UnitCapture = 4 then switch team to Player1
             if (_Player1UnitCapture == 4)
             {
                 UnityEngine.Debug.Log("Building Captured for Player1");
                 _CurTeam = "Player1";
+                _MiniMapBeacon.ColorCaptured("Player1");
+                foreach (var theLights in _AreaLightsArray)
+                {
+                    theLights.ColorCaptured("Player1");
+                }
             }
+
+            // When _Player2UnitCapture = 4 then switch team to Player2
             if (_Player2UnitCapture == 4)
             {
+                UnityEngine.Debug.Log("Building Captured for Player2");
                 _CurTeam = "Player2";
+                _MiniMapBeacon.ColorCaptured("Player2");
+                foreach (var theLights in _AreaLightsArray)
+                {
+                    theLights.ColorCaptured("Player2");
+                }
             }
         }
     }
@@ -324,7 +365,7 @@ public sealed class Infantry : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    private readonly ProgramType[] PossibleProgTypes = new ProgramType[4] 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -356,8 +397,7 @@ public sealed class Infantry : Unit
         _UnitGameObject = null;
     }
 
-    public Infantry(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Infantry, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+    public Infantry(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Infantry, int life = MaxUnitLife, int energy = MaxUnitEnergy, int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -404,6 +444,17 @@ public sealed class Infantry : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -423,7 +474,7 @@ public sealed class Jeep : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    private readonly ProgramType[] PossibleProgTypes = new ProgramType[4] 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -455,7 +506,7 @@ public sealed class Jeep : Unit
     }
 
     public Jeep(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Jeep, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -503,6 +554,17 @@ public sealed class Jeep : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -523,7 +585,7 @@ public sealed class Tank : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = new ProgramType[4] 
+    private readonly ProgramType[] PossibleProgTypes = new ProgramType[4] 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -555,7 +617,7 @@ public sealed class Tank : Unit
     }
 
     public Tank(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Tank, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -603,6 +665,17 @@ public sealed class Tank : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -622,7 +695,7 @@ public sealed class SAM : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -654,7 +727,7 @@ public sealed class SAM : Unit
     }
 
     public SAM(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.SAM, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -702,6 +775,17 @@ public sealed class SAM : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -722,7 +806,7 @@ public sealed class Turret : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround
     };
@@ -751,7 +835,7 @@ public sealed class Turret : Unit
     }
 
     public Turret(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.Turret, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -799,6 +883,17 @@ public sealed class Turret : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -819,7 +914,7 @@ public sealed class SmallBase : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -851,7 +946,7 @@ public sealed class SmallBase : Unit
     }
 
     public SmallBase(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.SmallBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = false;
@@ -874,22 +969,20 @@ public sealed class SmallBase : Unit
         _ProductionTime = ProductionTIme;
         _PossiblePrograms = PossibleProgTypes;
         _UnitGameObject = unitGameObject;
-
+        _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
+        _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
         if (_CurTeam == "Player1")
         {
             _Player1UnitCapture = 4;
-            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
-                .GetComponentInChildren<Sphere1>()
-                .ColorCaptured("Player1");
-            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
-                .GetComponentInChildren<Sphere2>()
-                .ColorCaptured("Player1");
-            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
-                .GetComponentInChildren<Sphere3>()
-                .ColorCaptured("Player1");
-            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>()
-                .GetComponentInChildren<Sphere4>()
-                .ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere1>().ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Player1");
+            _UnitGameObject.GetComponentInChildren<Player1UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player1");
+            foreach (var theLights in _AreaLightsArray)
+            {
+                theLights.ColorCaptured("Player1");
+            }
+            _MiniMapBeacon.ColorCaptured("Player1");
         }
 
         if (_CurTeam == "Player2")
@@ -899,6 +992,11 @@ public sealed class SmallBase : Unit
             _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere2>().ColorCaptured("Player2");
             _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere3>().ColorCaptured("Player2");
             _UnitGameObject.GetComponentInChildren<Player2UnitCapture>().GetComponentInChildren<Sphere4>().ColorCaptured("Player2");
+            foreach (var theLights in _AreaLightsArray)
+            {
+                theLights.ColorCaptured("Player2");
+            }
+            _MiniMapBeacon.ColorCaptured("Player2");
         }
 
     }
@@ -925,6 +1023,17 @@ public sealed class SmallBase : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -945,7 +1054,7 @@ public sealed class MainBase : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -977,7 +1086,7 @@ public sealed class MainBase : Unit
     }
 
     public MainBase(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.MainBase, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -1024,6 +1133,17 @@ public sealed class MainBase : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -1043,7 +1163,7 @@ public sealed class Shots : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -1075,7 +1195,7 @@ public sealed class Shots : Unit
     }
 
     public Shots(string curTeam, GameObject unitGameObject, ProgramType unitProgram = ProgramType.ShotFired, UType unitType = UType.Shots, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = false;
@@ -1123,6 +1243,17 @@ public sealed class Shots : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -1143,7 +1274,7 @@ public sealed class PlayerPlane : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -1175,7 +1306,7 @@ public sealed class PlayerPlane : Unit
     }
 
     public PlayerPlane(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.PlayerPlane, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -1223,6 +1354,17 @@ public sealed class PlayerPlane : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }
@@ -1242,7 +1384,7 @@ public sealed class PlayerMech : Unit
     private const WeaponsType Weapons = WeaponsType.Guns;
     private const int Cost = 40;
     private const float ProductionTIme = 6;
-    private ProgramType[] PossibleProgTypes = 
+    private readonly ProgramType[] PossibleProgTypes = 
     {
         ProgramType.StandGround,
         ProgramType.Guard,
@@ -1274,7 +1416,7 @@ public sealed class PlayerMech : Unit
     }
 
     public PlayerMech(string curTeam, ProgramType unitProgram, GameObject unitGameObject, UType unitType = UType.PlayerMech, int life = MaxUnitLife, int energy = MaxUnitEnergy,
-        int guns = MaxUnitGuns, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
+        int guns = MaxUnitGuns, int missiles = MaxUnitMissiles, WeaponsType weapons = WeaponsType.Guns, int cargoSpaceOfUnit = CargoSpaceOfUnit)
         : base(curTeam, unitProgram, unitType)
     {
         _IsShootable = true;
@@ -1322,6 +1464,17 @@ public sealed class PlayerMech : Unit
     public override int _MissileAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoSpace { get; set; }
+
+    public override GameObject[] _SmallBaseArray { get; set; }
+    public override GameObject[] _MainBaseArray { get; set; }
+    public override Transform _CurrentTransform { get; set; }
+    public override Transform _DropTransform { get; set; }
+    public override GameObject _CurTarget { get; set; }
+    public override GameObject _CurDestination { get; set; }
+    public override NavMeshAgent _Nav { get; set; }
+    public override AreaLightColor[] _AreaLightsArray { get; set; }
+    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+
     public override GameObject[] _Cargo { get; set; }
 
     public override GameObject _UnitGameObject { get; set; }

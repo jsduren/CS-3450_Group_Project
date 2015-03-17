@@ -54,8 +54,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AreaLightColor.cs" />
     <Compile Include="Assets\BuildingCapture.cs" />
     <Compile Include="Assets\DestroyByTime.cs" />
+    <Compile Include="Assets\MiniMapBeacon.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\System\Detonator.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
