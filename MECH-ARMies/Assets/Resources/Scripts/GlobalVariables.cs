@@ -84,8 +84,23 @@ public abstract class Unit : Object
     public abstract NavMeshAgent _Nav { get; set; }
     public abstract AreaLightColor[] _AreaLightsArray { get; set; }
     public abstract MiniMapBeacon _MiniMapBeacon { get; set; }
+    public abstract Transform _TargetTransformOffset { get; set; }
+    public abstract Transform _TargetTransform { get; set; }
+    public abstract Transform _ShotOriginTransform1 { get; set; }
+    public abstract Transform _ShotOriginTransform2 { get; set; }
+    public abstract bool _CanTransform { get; set; }
+    public abstract float _TransformWaitTime { get; set; }
+    public abstract float _NextTimeToTransform { get; set; }
+    public abstract float _NextPickUpAfterDropOff { get; set; }
+    public abstract float _TimeBetweenDropOffAndPickUp { get; set; }
+    public abstract bool _CurrentlyRegenerating { get; set; }
 
     public abstract GameObject[] _Cargo { get; set; }
+
+    public void Targeting(GameObject possibleTarget)
+    {
+        
+    }
 
     public void TakeDamage(int damageAmount)
     {
@@ -202,12 +217,107 @@ public abstract class Unit : Object
             _CanMove = false;
             _CanShoot = false;
             _IsShootable = false;
+            if (_UnitType == UType.PlayerPlane || _UnitType == UType.PlayerMech)
+            {
+                _UnitGameObject.SetActive(false);
+                //! Have an Explosion Have camera Quickly Pan back to base (Or just have ship quickly Move back, because camera will follow)
+            }
+            else
+            {
+                //! Have and Explosion and or a slow transition through the terrain
+                Destroy(_UnitGameObject);
+            }
         }
     }
 
+    // If unit dies will re-spawn at base
     public void Respawn()
     {
+        Transform tempRespawnTransform = GameObject.FindGameObjectWithTag(_CurTeam + "PlayerSpawnPoint").transform;
+        if (_UnitType == UType.PlayerPlane)
+        {
+            _UnitGameObject.transform.position = tempRespawnTransform.position;
+            _UnitGameObject.transform.rotation = tempRespawnTransform.rotation;
+            //! Put Delay and something for re-spawn effect
+            _UnitGameObject.SetActive(true);
+            // Re-initialize PlayerValues
+            _UnitGameObject.GetComponent<UnitController>().ThisUnit = new PlayerPlane(_CurTeam, ProgramType.StandGround, _UnitGameObject);
+        }
+        else
+        {
+            //! Put Delay and something for re-spawn effect
+            //! Create new PlayerPlane Unit at tempRespawnTransform
+            Destroy(_UnitGameObject);
+        }
+    }
 
+
+    // Might need to implement this in the UnitController instead of the unit Class
+    // Run when you hit the button for Transform/DropOff and PickUp
+    public void TransformPickUpDropOff(GameObject unitPickUp = null)
+    {
+        // Checks if it is a PLayer and it can Transform
+        // If it can't Transform then, it can't drop off units
+        if (_CanTransform && (_UnitType == UType.PlayerPlane || _UnitType == UType.PlayerMech))
+        {
+            // Tests if there is cargo(to drop-off) or a unit for pickup
+            if (_Cargo != null || unitPickUp != null)
+            {
+                // Tests If your picking up after dropping off or vice-versa too soon
+                // To prevent immediate pickup after drop off or vice-versa
+                if (_TimeBetweenDropOffAndPickUp <= Time.time)
+                {
+                    // Test if there is a unit to pickup and you have enough space in your cargohold for it
+                    if (unitPickUp != null && _CargoSpace <= unitPickUp.GetComponent<UnitController>().ThisUnit._CargoSpaceOfUnit)
+                    {
+                        _NextPickUpAfterDropOff = Time.time + _TimeBetweenDropOffAndPickUp;
+                        //! Pickup Unit and store in Cargo and Decrement CargoSpaceOfUnit
+                        //! Need to save all attributes of the unit in the cargo bay
+                    }
+                    // If there is no unit you are trying to pickup and you have cargo
+                    else if (_Cargo != null && unitPickUp == null)
+                    {
+                        _NextPickUpAfterDropOff = Time.time + _TimeBetweenDropOffAndPickUp;
+                        //! DropOff unit and Increment CargoSpaceOfUnit
+                        //! Need to set all the attributes of the unit to the new instantiation of the unit.
+                    }
+                }
+            }
+            // If there is no Cargo and there is no Unit to PickUP - TRANSFORM (More than meets the eye)
+            else 
+            {
+                // Tests if your transforming too soon
+                if (_NextTimeToTransform <= Time.time)
+                {
+                    // Tests which form the Player is currently in and Change to the opposite
+                    if (_UnitType == UType.PlayerPlane)
+                    {
+                        _NextTimeToTransform = Time.time + _TransformWaitTime;
+                        //! Change to PlayerMech
+                        //! Pass all the (Life, Energy, Guns, and _NextTimeToTransform ) of Plane to Mech
+                        Destroy(_UnitGameObject);
+                    }
+                    else
+                    {
+                        _NextTimeToTransform = Time.time + _TransformWaitTime;
+                        //! Change to PlayerPlane
+                        //! Pass all the (Life, Energy, Guns, and _NextTimeToTransform ) of Mech to Plane
+                        Destroy(_UnitGameObject);
+                    }
+                }
+            }
+        }
+    }
+
+    public void RegenUnitOrderPickUp()
+    {
+        // If Currently Over base YouCan't Transfrom and Your Currently Regenerating
+        if (!_CanTransform && _CurrentlyRegenerating)
+        {
+            //! Regenerate Life, Guns, Energy
+            //! Pickup Unit that is Ordered
+            
+        }
     }
 
     /// <summary>
@@ -454,6 +564,16 @@ public sealed class Infantry : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -564,6 +684,16 @@ public sealed class Jeep : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -675,6 +805,16 @@ public sealed class Tank : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -785,6 +925,16 @@ public sealed class SAM : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -893,6 +1043,16 @@ public sealed class Turret : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -1033,6 +1193,16 @@ public sealed class SmallBase : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -1143,6 +1313,16 @@ public sealed class MainBase : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -1253,6 +1433,16 @@ public sealed class Shots : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -1364,6 +1554,16 @@ public sealed class PlayerPlane : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 
@@ -1474,6 +1674,16 @@ public sealed class PlayerMech : Unit
     public override NavMeshAgent _Nav { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override Transform _TargetTransformOffset { get; set; }
+    public override Transform _TargetTransform { get; set; }
+    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform2 { get; set; }
+    public override bool _CanTransform { get; set; }
+    public override float _TransformWaitTime { get; set; }
+    public override float _NextTimeToTransform { get; set; }
+    public override float _NextPickUpAfterDropOff { get; set; }
+    public override float _TimeBetweenDropOffAndPickUp { get; set; }
+    public override bool _CurrentlyRegenerating { get; set; }
 
     public override GameObject[] _Cargo { get; set; }
 

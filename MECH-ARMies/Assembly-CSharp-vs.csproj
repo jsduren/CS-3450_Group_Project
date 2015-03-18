@@ -46,10 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AreaLightColor.cs" />
-     <Compile Include="Assets\BuildingCapture.cs" />
      <Compile Include="Assets\DestroyByTime.cs" />
-     <Compile Include="Assets\MiniMapBeacon.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\System\Detonator.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
@@ -78,12 +75,18 @@
      <Compile Include="Assets\Models\True Explosions\System\Scripts\exploders\Exploder2D.cs" />
      <Compile Include="Assets\Models\True Explosions\System\Scripts\exploders\SphereExploder.cs" />
      <Compile Include="Assets\ObjectAttributes.cs" />
-     <Compile Include="Assets\Player1UnitCapture.cs" />
-     <Compile Include="Assets\Player2UnitCapture.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\AreaLightColor.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\BuildingCapture.cs" />
      <Compile Include="Assets\Resources\Scripts\Base Scripts\MainBaseAttributes.cs" />
      <Compile Include="Assets\Resources\Scripts\Base Scripts\MainBaseHealth.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Player1UnitCapture.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Player2UnitCapture.cs" />
      <Compile Include="Assets\Resources\Scripts\Base Scripts\RegenNPickUp.cs" />
      <Compile Include="Assets\Resources\Scripts\Base Scripts\SmallBaseAttributes.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Sphere1.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Sphere2.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Sphere3.cs" />
+     <Compile Include="Assets\Resources\Scripts\Base Scripts\Sphere4.cs" />
      <Compile Include="Assets\Resources\Scripts\CameraController.cs" />
      <Compile Include="Assets\Resources\Scripts\DestroyByContact.cs" />
      <Compile Include="Assets\Resources\Scripts\GlobalVariables.cs" />
@@ -97,15 +100,16 @@
      <Compile Include="Assets\Resources\Scripts\RemoveShots.cs" />
      <Compile Include="Assets\Resources\Scripts\Respwan.cs" />
      <Compile Include="Assets\Resources\Scripts\Shooting.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\GunRangeCollider.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\LineOfSightCollider.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\MiniMapBeacon.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\MissileRangeCollider.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\StopAndShootCollider.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\UnitController.cs" />
+     <Compile Include="Assets\Resources\Scripts\Units\UnitMovement.cs" />
      <Compile Include="Assets\Resources\Scripts\enemyAIscript.cs" />
-     <Compile Include="Assets\Sphere1.cs" />
-     <Compile Include="Assets\Sphere2.cs" />
-     <Compile Include="Assets\Sphere3.cs" />
-     <Compile Include="Assets\Sphere4.cs" />
      <Compile Include="Assets\Terrain\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
      <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
-     <Compile Include="Assets\UnitController.cs" />
-     <Compile Include="Assets\UnitMovement.cs" />
      <Compile Include="Assets\UnitShooting.cs" />
      <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
      <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
