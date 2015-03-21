@@ -63,40 +63,27 @@ public class UnitController : MonoBehaviour {
             case "Infantry":
                 ThisUnit = new Infantry(team, ProgramType.NearestBase, gameObject)
                 {
-                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
-                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
                     _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
-                    _Nav = gameObject.GetComponent<NavMeshAgent>()
                 };
                 break;
             case "Jeep":
                 ThisUnit = new Jeep(team, ProgramType.NearestBase, gameObject)
                 {
-                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
-                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
                     _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
-                    _Nav = gameObject.GetComponent<NavMeshAgent>()
                 };
                 break;
             case "Tank":
                 ThisUnit = new Tank(team, ProgramType.NearestBase, gameObject)
                 {
-                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
-                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
-                    _DropTransform = gameObject.transform,
-                    _Nav = gameObject.GetComponent<NavMeshAgent>()
-                };
+                    _DropTransform = gameObject.transform,                };
                 break;
             case "SAM":
                 ThisUnit = new SAM(team, ProgramType.NearestBase, gameObject)
                 {
-                    _SmallBaseArray = gameController.GetComponent<GameController>().smallBases,
-                    _MainBaseArray = gameController.GetComponent<GameController>().mainBases,
                     _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
-                    _Nav = gameObject.GetComponent<NavMeshAgent>()
                 };
                 break;
             case "Turret":
@@ -108,14 +95,17 @@ public class UnitController : MonoBehaviour {
             case "SmallBase":
                 ThisUnit = new SmallBase(team, ProgramType.NearestBase, gameObject);
                 break;
-            case "Shots":
-                ThisUnit = new Shots(team, gameObject);
+            case "Shot":
+                ThisUnit = new Shot(team, gameObject);
+                break;
+            case "Missile":
+                ThisUnit = new Missile(team, gameObject);
                 break;
             case "PlayerPlane":
-                ThisUnit = new PlayerPlane(team, ProgramType.StandGround, gameObject);
+                ThisUnit = new PlayerPlane(team, gameObject);
                 break;
             case "PlayerMech":
-                ThisUnit = new PlayerMech(team, ProgramType.StandGround, gameObject);
+                ThisUnit = new PlayerMech(team, gameObject);
                 break;
 
         }
@@ -138,7 +128,7 @@ public class UnitController : MonoBehaviour {
                 ThisUnit._UnitProgram = ProgramType.AttackMain;
                 break;
             case "Shot Fired":
-                ThisUnit._UnitProgram = ProgramType.ShotFired;
+                ThisUnit._UnitProgram = ProgramType.Shot;
                 break;
         }
     }
