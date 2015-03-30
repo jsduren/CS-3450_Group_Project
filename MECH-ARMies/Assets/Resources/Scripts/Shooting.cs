@@ -35,7 +35,7 @@ public class Shooting : MonoBehaviour {
     //}
 
 
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent(typeof (UnitController)))
         {
@@ -49,7 +49,7 @@ public class Shooting : MonoBehaviour {
 
 
         
-    }
+    }*/
 
 
 }

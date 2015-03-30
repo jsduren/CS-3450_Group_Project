@@ -94,6 +94,7 @@
      <Compile Include="Assets\Resources\Scripts\Controllers\PlatformInputController.js" />
      <Compile Include="Assets\Resources\Scripts\Controllers\ThirdPersonController.js" />
      <Compile Include="Assets\Resources\Scripts\ThirdPersonCamera.js" />
+     <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info (1).txt" />
      <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
      <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
      <None Include="Assets\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />

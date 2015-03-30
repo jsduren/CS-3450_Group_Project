@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour {
 	public int StartingMoney;
 	public GameObject MenuController;
     public GameObject Ship;
+    public GameObject gunShot;
+    public GameObject missileShot;
 	
     Vector3 shipspawn = new Vector3(105.0f, 35.0f, 105.0f);
 

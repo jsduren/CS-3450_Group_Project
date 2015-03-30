@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TurretRotationTowardEnemy : MonoBehaviour {
+public class TurretRotation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using UnityEditor;
+using UnityEngine.UI;
 
 public enum UType
 {
@@ -34,7 +36,11 @@ public enum ProgramType
     NearestBase = 2,
     AttackMain = 3,
     Shot = 4,
-    Missile = 5
+    Missile = 5,
+    PlayerPlane = 6,
+    PlayerMech = 7,
+    CompPlane = 8,
+    CompMech = 9
 }
 
 public static class BaseStaticValues
@@ -65,12 +71,22 @@ public static class BaseStaticValues
         public static readonly float GunRange = 30f;
         public static readonly float TransformRate = 1f;
         public static readonly float PickUpDropOffRate = .25f;
+
         public static readonly WeaponsType Weapons = WeaponsType.Guns;
         public static readonly int MaxCargoCapacity = 4;
     }
 
+    public static class Unit
+    {
+        public static float RotationDamping = 50f;
+    }
+
     public static GameObject[] SmallBaseArray = new GameObject[9];
     public static GameObject[] MainBaseArray = new GameObject[2];
+
+    //public static Object[] OrderingArray = { new Infantry(), new Jeep(), new Tank(), new SAM(), new Turret() };
+
+   // private static int Cost = OrderingArray[(int) UType.Infantry].Cost;
 
     // Player 1 Data
     public static class Player1
@@ -91,15 +107,15 @@ public static class BaseStaticValues
     }
     
     // Infantry Base Attributes
-    public static class Infantry
+    public class Infantry : Object
     {
-        public const int MaxLife = 50;
+        public const int MaxLife = 100;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
         
-        public static readonly float LineOfSight = 20;
+        public static readonly float LineOfSight = 30;
         public static readonly float GunRange = 20;
-        public static readonly int GunDamage = 5;
+        public static readonly int GunDamage = 10;
         public static readonly float GunFireRate = 0.2f;
         public static readonly int CargoSpace = 1;
         public static readonly int Cost = 40;
@@ -112,18 +128,20 @@ public static class BaseStaticValues
             ProgramType.NearestBase,
             ProgramType.AttackMain
         };
+
+        
     }
 
     // Jeep Base Attributes
-	public static class Jeep
+    public class Jeep : Object
 	{
-        public const int MaxLife = 50;
+        public const int MaxLife = 250;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
 
-		public static readonly float LineOfSight = 20;
-		public static readonly float GunRange = 20;
-		public static readonly int GunDamage = 10;
+		public static readonly float LineOfSight = 40;
+		public static readonly float GunRange = 30;
+		public static readonly int GunDamage = 20;
 		public static readonly float GunFireRate = 0.2f;
         public static readonly int CargoSpace = 2;
 		public static readonly int Cost = 40;
@@ -139,7 +157,7 @@ public static class BaseStaticValues
 	}
 	
 	// Tank Base Attributes
-	public static class Tank
+    public class Tank : Object
 	{
         public const int MaxLife = 50;
         public const float MaxEnergy = 200;
@@ -163,7 +181,7 @@ public static class BaseStaticValues
 	}
 
     // SAM Base Attributes
-	public static class SAM
+    public class SAM : Object
 	{
         public const int MaxLife = 50;
         public const float MaxEnergy = 200;
@@ -183,7 +201,7 @@ public static class BaseStaticValues
 	}
 
     // Turret Base Attributes
-	public static class Turret
+    public class Turret : Object
 	{
         public const int MaxLife = 50;
         public const float MaxEnergy = 200;
@@ -225,7 +243,7 @@ public static class BaseStaticValues
 	public static class Missile
 	{
 		public static readonly int Velocity = 50;
-		public static readonly int Range = 40;
+		public static readonly float Range = 40;
 		public static readonly int Damage = 30;
 		public static readonly float FireRate = 1f;
 	}
@@ -257,9 +275,9 @@ public abstract class Unit : Object
     public abstract float _Energy { get; set; }
     public abstract int _Guns { get; set; }
     public abstract int _Missiles { get; set; }
-    public abstract int _GunRange { get; set; }
-    public abstract int _MissileRange { get; set; }
-    public abstract int _GuardRange { get; set; }
+    public abstract float _GunRange { get; set; }
+    public abstract float _MissileRange { get; set; }
+    public abstract float _GuardRange { get; set; }
     public abstract bool _CanMove { get; set; }
     public abstract bool _IsDead { get; set; }
     public abstract int _Player1UnitCapture { get; set; }
@@ -268,7 +286,8 @@ public abstract class Unit : Object
     public abstract int _GunAttackDamage { get; set; }
     public abstract int _CargoSpaceOfUnit { get; set; }
     public abstract int _CargoCapacity { get; set; }
-
+    public abstract int _Damage { get; set; }
+    public abstract float _GunFireRate { get; set; }
     public abstract Transform _CurrentTransform { get; set; }
     public abstract Transform _DropTransform { get; set; }
     public abstract GameObject _CurTarget { get; set; }
@@ -287,34 +306,96 @@ public abstract class Unit : Object
 
     public abstract Object[] _Cargo { get; set; }
 
-    public void Targeting(GameObject possibleTarget)
+    public void TakeDamage(int damageAmount, GameObject shotGameObject)
     {
-        
-    }
-
-    public void TakeDamage(int damageAmount)
-    {
+        UnityEngine.Debug.Log(string.Format("TakeDamage Triggered {0}", _UnitGameObject.transform.position));
         if (_IsShootable && !_IsDead)
         {
-            _Life -= damageAmount;
+            _Life = _Life - damageAmount;
+            Destroy(shotGameObject);
             if (_Life <= 0)
             {
                 _IsDead = true;
             }
         }
     }
-    public GameObject Shoot(GameObject curTargetGameObject)
-    {
-        if (_CanShoot && !_IsDead)
-        {
 
+    public void Aiming()
+    {
+        if (_CurTarget != null)
+        {
+            Vector3 targetPosition2d = new Vector3(_CurTarget.transform.position.x, _CurTarget.transform.position.y + 1, _CurTarget.transform.position.z);
+            Transform aim_pan = _UnitGameObject.GetComponentInChildren<AimPan>().transform;
+            aim_pan.LookAt(targetPosition2d);
+            aim_pan.eulerAngles = new Vector3(0, aim_pan.eulerAngles.y, 0);
+            if (_UnitType == UType.Jeep)
+            {
+
+                Transform aim_tilt = _UnitGameObject.GetComponentInChildren<AimTilt>().transform;
+                aim_tilt.LookAt(targetPosition2d);
+                //aim_tilt.eulerAngles = new Vector3(aim_tilt.eulerAngles.x, 0, 0);
+
+                _UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(_UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
+
+                //_UnitGameObject.GetComponentInChildren<GunRotation>().transform.LookAt(targetPosition2d);
+                _UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation = Quaternion.RotateTowards(_UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation, aim_tilt.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
+            }
+            else
+            {
+
+                //Transform aim_tilt = _UnitGameObject.GetComponentInChildren<AimTilt>().transform;
+                //aim_tilt.LookAt(targetPosition2d);
+                //aim_tilt.eulerAngles = new Vector3(aim_tilt.eulerAngles.x, 0, 0);
+                //_UnitGameObject.GetComponentInChildren<TurretRotation>().transform.LookAt(targetPosition2d);
+                _UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(_UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping * 2);
+            }
+        }
+    }
+
+    public void Targeting(GameObject possibleTarget, string strCollider)
+    {
+        //UnityEngine.Debug.Log(string.Format("Targeting Triggered {0}", _UnitGameObject.transform.position));
+        if (possibleTarget.GetComponent<UnitController>() != null && _CurTarget == null)
+        {
+            if (possibleTarget.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam && possibleTarget.GetComponent<UnitController>().ThisUnit._IsShootable && !possibleTarget.GetComponent<UnitController>().ThisUnit._IsDead)
+            {
+                _CurTarget = possibleTarget;
+            }
+        }
+    }
+
+    public GameObject Shoot(GameObject curTargetGameObject, string strCollider)
+    {
+        //UnityEngine.Debug.Log(string.Format("Shoot Triggered {0}", _UnitGameObject.transform.position));
+        if (curTargetGameObject.GetComponent<UnitController>() != null && _CurTarget != null && _CanShoot && !_IsDead)
+        {
+            if (_CurTarget.GetComponent<UnitController>() != null && _CurTarget.GetComponent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane && (_Weapons == WeaponsType.Guns || _Weapons == WeaponsType.GunsAndMissiles))
+            {
+                if (_ShotOriginTransform1 != null && _NextGunShot <= Time.time)
+                {
+                    _NextGunShot = Time.time + _GunFireRate;
+                    GameObject theshot = Instantiate(GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>().gunShot, _ShotOriginTransform1.position, _ShotOriginTransform1.rotation) as GameObject;
+                    _NextGunShot = Time.time + _GunFireRate;
+                    _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
+                    if (theshot != null && theshot.GetComponent<UnitController>() != null)
+                    {
+                        theshot.GetComponent<UnitController>().curTeam = _CurTeam;
+                        theshot.GetComponent<UnitController>().dealDamage = _GunAttackDamage;
+                        theshot.GetComponent<UnitController>().gunRange = _GunRange;
+                    }
+                }
+            }
+            else if (_CurTarget.GetComponent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane && (_Weapons == WeaponsType.Missiles || _Weapons == WeaponsType.GunsAndMissiles))
+            {
+                
+            }
         }
         return curTargetGameObject;
     }
 
-    public GameObject Move(GameObject gameContObject, GameObject curClosestGameObject, Transform curUnitTransform)
+    public GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
     {
-        UnityEngine.Debug.Log("Running Move Function");
+        //UnityEngine.Debug.Log("Running Move Function");
         if (_CanMove && !_IsDead && _UnitProgram != ProgramType.StandGround)
         {
             //UnityEngine.Debug.Log("First If Statement, Can Move");
@@ -324,6 +405,33 @@ public abstract class Unit : Object
             switch (_UnitProgram)
             {
                 case ProgramType.Guard:
+                    //UnityEngine.Debug.Log(string.Format("Guard Triggered {0}", _UnitGameObject.transform.position));
+                    if (_CurTarget != null && _CurTarget.GetComponent<UnitController>().ThisUnit._IsShootable && !_CurTarget.GetComponent<UnitController>().ThisUnit._IsDead)
+                    {
+                        distance = Vector3.Distance(_UnitGameObject.transform.position, _CurTarget.transform.position);
+                        if (distance > _GunRange/1.25f)
+                        {
+                            _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = _GunRange / 1.25f;
+                            _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(_CurTarget.transform.position);
+                        }
+                        else
+                        {
+                            _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = _GunRange / 1.25f;
+                            _UnitGameObject.GetComponent<NavMeshAgent>().Stop();
+                        }
+                    }
+                    else if (_UnitGameObject.transform.position != _DropTransform.position)
+                    {
+                        _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(_DropTransform.position);
+                    }
+                    else
+                    {
+                        _UnitGameObject.GetComponent<NavMeshAgent>().Stop();
+                    }
+
+
+
+
 
                     break;
                 case ProgramType.NearestBase:
@@ -338,14 +446,14 @@ public abstract class Unit : Object
                         {
                             distance = Vector3.Distance(smallBase.transform.position, _CurrentTransform.position);
                             tempClosestBase = smallBase;
-                            UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", smallBase));
+                            //UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", smallBase));
                         }
                         // Using a LINQ list to find the shortest distance
                         foreach (var mainBase in BaseStaticValues.MainBaseArray.Where(mainBase => mainBase.GetComponent<UnitController>() != null && _CurTeam != null && mainBase.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam).Where(mainBase => distance >= Vector3.Distance(mainBase.transform.position, _CurrentTransform.position)))
                         {
                             distance = Vector3.Distance(mainBase.transform.position, _CurrentTransform.position);
                             tempClosestBase = mainBase;
-                            UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", mainBase));
+                            //UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", mainBase));
                         }
 
                         if (tempClosestBase != null)
@@ -354,8 +462,10 @@ public abstract class Unit : Object
                         }
 
                         curClosestGameObject = tempClosestBase;
+
                         if (curClosestGameObject != null)
                         {
+                            distance = Vector3.Distance(_UnitGameObject.transform.position, curClosestGameObject.transform.position);
                             if (_UnitType == UType.Infantry && curClosestGameObject.GetComponent<UnitController>().ThisUnit._UnitType == UType.SmallBase)
                             {
                                 _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(new Vector3(curClosestGameObject.transform.position.x + 10.2f,
@@ -364,6 +474,7 @@ public abstract class Unit : Object
                             }
                             else
                             {
+                                _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = _GunRange / 2;
                                 _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(curClosestGameObject.transform.position);
                             }
                         }
@@ -372,14 +483,45 @@ public abstract class Unit : Object
                 case ProgramType.AttackMain:
                     //# AttackMain
                     distance = 4000f;
-                    foreach (var mainBase in BaseStaticValues.MainBaseArray.Where(mainBase => mainBase.GetComponent<UnitController>() != null && _CurTeam != null && mainBase.GetComponent<UnitController>().ThisUnit._CurTeam != _CurTeam).Where(mainBase => distance >= Vector3.Distance(mainBase.transform.position, _CurrentTransform.position)))
+                    if (_CurTeam == "Player1")
                     {
-                        distance = Vector3.Distance(mainBase.transform.position, _CurrentTransform.position);
-                        curClosestGameObject = mainBase;
-                        UnityEngine.Debug.Log(string.Format("Closest Main Base {0}", mainBase));
+                        curClosestGameObject = BaseStaticValues.MainBaseArray[2 - 1];
+                        _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
+                        _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(curClosestGameObject.transform.position);
+                    }
+                    else
+                    {
+                        curClosestGameObject = BaseStaticValues.MainBaseArray[1 - 1];
+                        _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
+                        _UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(curClosestGameObject.transform.position);
                     }
                     break; //# AttackMain
+                case ProgramType.Shot:
+                    if (Vector3.Distance(_CurrentTransform.position, _DropTransform.position) < _GunRange)
+                    {
+                        _UnitGameObject.GetComponent<Rigidbody>().velocity = _CurrentTransform.forward*BaseStaticValues.Shot.Velocity*Time.deltaTime;
+                    }
+                    else
+                    {
+                        Destroy(_UnitGameObject);
+                    }
 
+                    break;
+                case ProgramType.Missile:
+
+                    break;
+                case ProgramType.PlayerPlane:
+
+                    break;
+                case ProgramType.PlayerMech:
+
+                    break;
+                case ProgramType.CompPlane:
+
+                    break;
+                case ProgramType.CompMech:
+
+                    break;
             }
             //}
         }
@@ -392,6 +534,7 @@ public abstract class Unit : Object
             _CanMove = false;
             _CanShoot = false;
             _IsShootable = false;
+            UnityEngine.Debug.Log("Death Called");
             if (_UnitType == UType.PlayerPlane || _UnitType == UType.PlayerMech)
             {
                 _UnitGameObject.SetActive(false);
@@ -502,7 +645,7 @@ public abstract class Unit : Object
     public void BaseCapture(GameObject otherGameObject)
     {
         // Tests if Current Unit is a SmallBase
-        if (_UnitType == UType.SmallBase)
+        if (otherGameObject != null && _UnitType == UType.SmallBase)
         {
             // Tests if the unit that entered the base is on Player1's Team 
             if (otherGameObject.GetComponent<UnitController>().ThisUnit._CurTeam == "Player1")
@@ -646,9 +789,6 @@ public sealed class Infantry : Unit
         _Life = BaseStaticValues.Infantry.MaxLife;
         _Energy = BaseStaticValues.Infantry.MaxEnergy;
         _Guns = BaseStaticValues.Infantry.MaxGuns;
-        _GunAttackDamage = BaseStaticValues.Infantry.GunDamage;
-        _Weapons = BaseStaticValues.Infantry.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Infantry.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = null;
@@ -674,9 +814,6 @@ public sealed class Infantry : Unit
         _Life = life;
         _Energy = energy;
         _Guns = guns;
-        _CargoSpaceOfUnit = BaseStaticValues.Infantry.CargoSpace;
-        _GunAttackDamage = BaseStaticValues.Infantry.GunDamage;
-        _Weapons = BaseStaticValues.Infantry.Weapons;
         _UnitGameObject = unitGameObject;
     }
 
@@ -687,17 +824,19 @@ public sealed class Infantry : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Infantry.GunRange; } set { } }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get { return BaseStaticValues.Infantry.LineOfSight; } set { } }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
-    public override int _CargoSpaceOfUnit { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Infantry.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Infantry.GunDamage; } set { } }
+    public override int _CargoSpaceOfUnit { get { return BaseStaticValues.Infantry.CargoSpace; } set { } }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get{ return BaseStaticValues.Infantry.GunFireRate; } set { } }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -706,7 +845,7 @@ public sealed class Infantry : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
@@ -727,9 +866,6 @@ public sealed class Jeep : Unit
         _Life = BaseStaticValues.Jeep.MaxLife;
         _Energy = BaseStaticValues.Jeep.MaxEnergy;
         _Guns = BaseStaticValues.Jeep.MaxGuns;
-        _GunAttackDamage = BaseStaticValues.Jeep.GunDamage;
-        _Weapons = BaseStaticValues.Jeep.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Jeep.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = null;
@@ -753,9 +889,6 @@ public sealed class Jeep : Unit
         _Life = life;
         _Energy = energy;
         _Guns = guns;
-        _GunAttackDamage = BaseStaticValues.Jeep.GunDamage;
-        _Weapons = BaseStaticValues.Jeep.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Jeep.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
@@ -769,17 +902,19 @@ public sealed class Jeep : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Jeep.GunRange; } set { } }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get { return BaseStaticValues.Jeep.LineOfSight; } set { } }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
-    public override int _CargoSpaceOfUnit { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Jeep.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Jeep.GunDamage; } set { } }
+    public override int _CargoSpaceOfUnit { get { return BaseStaticValues.Jeep.CargoSpace; } set { } }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get { return BaseStaticValues.Jeep.GunFireRate; } set { } }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -788,7 +923,7 @@ public sealed class Jeep : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
@@ -811,9 +946,6 @@ public sealed class Tank : Unit
         _Life = BaseStaticValues.Tank.MaxLife;
         _Energy = BaseStaticValues.Tank.MaxEnergy;
         _Guns = BaseStaticValues.Tank.MaxGuns;
-        _GunAttackDamage = BaseStaticValues.Tank.GunDamage;
-        _Weapons = BaseStaticValues.Tank.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Tank.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = null;
@@ -837,12 +969,13 @@ public sealed class Tank : Unit
         _Life = life;
         _Energy = energy;
         _Guns = guns;
-        _GunAttackDamage = BaseStaticValues.Tank.GunDamage;
-        _Weapons = BaseStaticValues.Tank.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Tank.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
+        if (unitGameObject != null)
+        {
+            _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = _GunRange/2;
+        }
 
     }
 
@@ -853,17 +986,19 @@ public sealed class Tank : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Tank.GunRange; } set { } }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get { return BaseStaticValues.Tank.LineOfSight; } set { } }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
-    public override int _CargoSpaceOfUnit { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Tank.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Tank.GunDamage; } set { } }
+    public override int _CargoSpaceOfUnit { get { return BaseStaticValues.Tank.CargoSpace; } set { } }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get { return BaseStaticValues.Tank.GunFireRate; } set { } }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -872,7 +1007,7 @@ public sealed class Tank : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
@@ -893,8 +1028,6 @@ public sealed class SAM : Unit
         _Life = BaseStaticValues.SAM.MaxLife;
         _Energy = BaseStaticValues.SAM.MaxEnergy;
         _Missiles = BaseStaticValues.SAM.MaxMissiles;
-        _Weapons = BaseStaticValues.SAM.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.SAM.CargoSpace;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = null;
@@ -917,9 +1050,7 @@ public sealed class SAM : Unit
         _IsCapturable = false;
         _Life = life;
         _Energy = energy;
-        _Missiles = missiles; 
-        _Weapons = BaseStaticValues.SAM.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.SAM.CargoSpace;
+        _Missiles = missiles;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
@@ -933,17 +1064,19 @@ public sealed class SAM : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get; set; }
+    public override float _MissileRange { get { return BaseStaticValues.Missile.Range; } set { } }
+    public override float _GuardRange { get { return BaseStaticValues.SAM.LineOfSight; } set { } }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.SAM.Weapons; } set { } }
     public override int _GunAttackDamage { get; set; }
-    public override int _CargoSpaceOfUnit { get; set; }
+    public override int _CargoSpaceOfUnit { get { return BaseStaticValues.SAM.CargoSpace; } set { } }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get; set; }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -952,7 +1085,7 @@ public sealed class SAM : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
@@ -974,10 +1107,7 @@ public sealed class Turret : Unit
         _Life = BaseStaticValues.Turret.MaxLife;
         _Energy = BaseStaticValues.Turret.MaxEnergy;
         _Guns = BaseStaticValues.Turret.MaxGuns;
-        _GunAttackDamage = BaseStaticValues.Turret.GunDamage;
         _Missiles = BaseStaticValues.Turret.MaxMissiles;
-        _Weapons = BaseStaticValues.Turret.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Turret.CargoSpace;
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = null;
@@ -1003,9 +1133,6 @@ public sealed class Turret : Unit
         _Energy = energy;
         _Missiles = missiles;
         _Guns = guns;
-        _GunAttackDamage = BaseStaticValues.Turret.GunDamage;
-        _Weapons = BaseStaticValues.Turret.Weapons;
-        _CargoSpaceOfUnit = BaseStaticValues.Turret.CargoSpace;
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
@@ -1019,17 +1146,19 @@ public sealed class Turret : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Turret.GunRange; } set { } }
+    public override float _MissileRange { get { return BaseStaticValues.Missile.Range; } set { } }
+    public override float _GuardRange { get { return BaseStaticValues.Turret.LineOfSight; } set { } }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
-    public override int _CargoSpaceOfUnit { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Turret.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Turret.GunDamage; } set { } }
+    public override int _CargoSpaceOfUnit { get { return BaseStaticValues.Turret.CargoSpace; } set { } }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get { return BaseStaticValues.Turret.GunFireRate; } set { } }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -1038,7 +1167,7 @@ public sealed class Turret : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
@@ -1078,8 +1207,11 @@ public sealed class SmallBase : Unit
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-        _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
-        _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
+        if (_UnitGameObject)
+        {
+            _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
+            _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
+        }
         if (_CurTeam == "Player1")
         {
             _Player1UnitCapture = 4;
@@ -1117,9 +1249,9 @@ public sealed class SmallBase : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get; set; }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }     
     public override int _Player1UnitCapture { get; set; }
@@ -1127,7 +1259,9 @@ public sealed class SmallBase : Unit
     public override WeaponsType _Weapons { get; set; }
     public override int _GunAttackDamage { get; set; }     
     public override int _CargoSpaceOfUnit { get; set; }
-    public override int _CargoCapacity { get; set; }     
+    public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get; set; }     
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -1179,18 +1313,48 @@ public sealed class MainBase : Unit
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
+        if (_UnitGameObject)
+        {
+            _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
+            _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
+        }
+        if (_CurTeam == "Player1")
+        {
+            foreach (var theLights in _AreaLightsArray)
+            {
+                theLights.ColorCaptured("Player1");
+            }
+            _MiniMapBeacon.ColorCaptured("Player1");
+        }
+
+        if (_CurTeam == "Player2")
+        {
+            foreach (var theLights in _AreaLightsArray)
+            {
+                theLights.ColorCaptured("Player2");
+            }
+            _MiniMapBeacon.ColorCaptured("Player2");
+        }
     }
 
     public override bool _IsShootable { get; set; }
     public override bool _CanShoot { get; set; }
     public override bool _IsCapturable { get; set; }
-    public override int _Life { get; set; }
+    public override int _Life 
+    { 
+        get { if (_CurTeam == "Player1") { return (int)GameObject.FindGameObjectWithTag("Player1BaseHealth").GetComponent<Slider>().value; }
+            return (int)GameObject.FindGameObjectWithTag("Player2BaseHealth").GetComponent<Slider>().value;
+        }
+        set { if (_CurTeam == "Player1") { GameObject.FindGameObjectWithTag("Player1BaseHealth").GetComponent<Slider>().value = value; return; }
+            GameObject.FindGameObjectWithTag("Player2BaseHealth").GetComponent<Slider>().value = value;
+        }
+    }
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get; set; }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
@@ -1199,6 +1363,8 @@ public sealed class MainBase : Unit
     public override int _GunAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get; set; }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -1236,7 +1402,7 @@ public sealed class Shot : Unit
         (
         string curTeam, 
         GameObject unitGameObject,
-        int gunAttackDamage = 0,
+        int damage = 3,
         ProgramType unitProgram = ProgramType.Shot, 
         UType unitType = UType.Shot)
         : base(curTeam, unitProgram, unitType)
@@ -1244,10 +1410,11 @@ public sealed class Shot : Unit
         _IsShootable = false;
         _CanShoot = false;
         _IsCapturable = false;
-        _GunAttackDamage = gunAttackDamage;
+        _Damage = damage;
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
+        _DropTransform = unitGameObject.transform;
 
     }
 
@@ -1258,9 +1425,9 @@ public sealed class Shot : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get; set; }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
@@ -1269,7 +1436,9 @@ public sealed class Shot : Unit
     public override int _GunAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoCapacity { get; set; }
-    public override Transform _CurrentTransform { get; set; }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get; set; }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set { } }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
@@ -1325,9 +1494,9 @@ public sealed class Missile : Unit
     public override float _Energy { get; set; }
     public override int _Guns { get; set; }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get; set; }
+    public override float _MissileRange { get { return BaseStaticValues.Missile.Range; } set { } }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
@@ -1336,6 +1505,8 @@ public sealed class Missile : Unit
     public override int _GunAttackDamage { get; set; }
     public override int _CargoSpaceOfUnit { get; set; }
     public override int _CargoCapacity { get; set; }
+    public override int _Damage { get { return BaseStaticValues.Missile.Damage; } set { } }
+    public override float _GunFireRate { get; set; }
     public override Transform _CurrentTransform { get; set; }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
@@ -1371,9 +1542,8 @@ public sealed class PlayerPlane : Unit
     public PlayerPlane(
         string curTeam,
         GameObject unitGameObject,
-        ProgramType unitProgram = ProgramType.StandGround,
-        UType unitType = UType.PlayerMech,
-        WeaponsType weapons = WeaponsType.Guns
+        ProgramType unitProgram = ProgramType.PlayerPlane,
+        UType unitType = UType.PlayerMech
         )
         : base(curTeam, unitProgram, unitType)
     {
@@ -1405,18 +1575,20 @@ public sealed class PlayerPlane : Unit
         set { if (_CurTeam == "Player1") { BaseStaticValues.Player1.Guns = value; } BaseStaticValues.Player2.Guns = value; }
     }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Player.GunRange; } set { } }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Player.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Player.GunDamage; } set { } }
     public override int _CargoSpaceOfUnit { get; set; }
-    public override int _CargoCapacity { get; set; }
-    public override Transform _CurrentTransform { get; set; }
+    public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
@@ -1424,8 +1596,8 @@ public sealed class PlayerPlane : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
-    public override Transform _ShotOriginTransform2 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
+    public override Transform _ShotOriginTransform2 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }
     public override float _NextPickUpAfterDropOff { get; set; }
@@ -1451,9 +1623,8 @@ public sealed class PlayerMech : Unit
     public PlayerMech(
         string curTeam, 
         GameObject unitGameObject,
-        ProgramType unitProgram = ProgramType.StandGround,
-        UType unitType = UType.PlayerMech,
-        WeaponsType weapons = WeaponsType.Guns
+        ProgramType unitProgram = ProgramType.PlayerMech,
+        UType unitType = UType.PlayerMech
         )
         : base(curTeam, unitProgram, unitType)
     {
@@ -1469,7 +1640,7 @@ public sealed class PlayerMech : Unit
     public override bool _IsShootable { get; set; }
     public override bool _CanShoot { get; set; }
     public override bool _IsCapturable { get; set; }
-    public override int _Life 
+    public override int _Life
     {
         get { if (_CurTeam == "Player1") { return BaseStaticValues.Player1.Life; } return BaseStaticValues.Player2.Life; }
         set { if (_CurTeam == "Player1") { BaseStaticValues.Player1.Life = value; } BaseStaticValues.Player2.Life = value; }
@@ -1485,18 +1656,20 @@ public sealed class PlayerMech : Unit
         set { if (_CurTeam == "Player1") { BaseStaticValues.Player1.Guns = value; } BaseStaticValues.Player2.Guns = value; }
     }
     public override int _Missiles { get; set; }
-    public override int _GunRange { get; set; }
-    public override int _MissileRange { get; set; }
-    public override int _GuardRange { get; set; }
+    public override float _GunRange { get { return BaseStaticValues.Player.GunRange; } set { } }
+    public override float _MissileRange { get; set; }
+    public override float _GuardRange { get; set; }
     public override bool _CanMove { get; set; }
     public override bool _IsDead { get; set; }
     public override int _Player1UnitCapture { get; set; }
     public override int _Player2UnitCapture { get; set; }
-    public override WeaponsType _Weapons { get; set; }
-    public override int _GunAttackDamage { get; set; }
+    public override WeaponsType _Weapons { get { return BaseStaticValues.Player.Weapons; } set { } }
+    public override int _GunAttackDamage { get { return BaseStaticValues.Player.GunDamage; } set { } }
     public override int _CargoSpaceOfUnit { get; set; }
-    public override int _CargoCapacity { get; set; }
-    public override Transform _CurrentTransform { get; set; }
+    public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
+    public override int _Damage { get; set; }
+    public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
@@ -1504,7 +1677,7 @@ public sealed class PlayerMech : Unit
     public override MiniMapBeacon _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
-    public override Transform _ShotOriginTransform1 { get; set; }
+    public override Transform _ShotOriginTransform1 { get { return _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().transform; } set { } }
     public override Transform _ShotOriginTransform2 { get; set; }
     public override bool _CanTransform { get; set; }
     public override float _NextTimeToTransform { get; set; }

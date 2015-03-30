@@ -54,7 +54,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AimPan.cs" />
+    <Compile Include="Assets\AimTilt.cs" />
+    <Compile Include="Assets\AttachRigidbody.cs" />
+    <Compile Include="Assets\DestroyByCalcTime.cs" />
     <Compile Include="Assets\DestroyByTime.cs" />
+    <Compile Include="Assets\GunBarrelEnd.cs" />
+    <Compile Include="Assets\GunRotation.cs" />
+    <Compile Include="Assets\InfantryRotation.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\System\Detonator.cs" />
     <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
@@ -117,10 +124,11 @@
     <Compile Include="Assets\Resources\Scripts\Units\UnitMovement.cs" />
     <Compile Include="Assets\Resources\Scripts\enemyAIscript.cs" />
     <Compile Include="Assets\Terrain\Water (Basic)\Sources\Scripts\WaterSimple.cs" />
-    <Compile Include="Assets\TurretRotationTowardEnemy.cs" />
-    <Compile Include="Assets\UnitShooting.cs" />
+    <Compile Include="Assets\TurretRotation.cs" />
+    <Compile Include="Assets\rig.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info (1).txt" />
     <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
     <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
     <None Include="Assets\Resources\Prefabs\Cartoon Soldier\Readme.txt" />

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitShooting : MonoBehaviour {
+public class GunRotation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

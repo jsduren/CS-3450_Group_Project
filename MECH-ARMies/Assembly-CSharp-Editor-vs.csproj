@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Shaders\Hard Surface Free\Editor\Reset Fresnel Reflection Value.cs" />
+     <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info (1).txt" />
      <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
      <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
      <None Include="Assets\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
@@ -72,6 +73,10 @@
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-vs.csproj">
+      <Project>{7CF18EF8-5D61-CE9E-6ACD-09089C01136E}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

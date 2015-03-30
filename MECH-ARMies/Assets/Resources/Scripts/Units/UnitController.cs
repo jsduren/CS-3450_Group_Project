@@ -8,18 +8,19 @@ public class UnitController : MonoBehaviour {
 
     public Unit ThisUnit;
     public string curTeam = "Neutral";
+    public int dealDamage;
+    public float gunRange;
+    private const string NoColliderStr = "NoCollider";
     public string unitType;
-    private string prevProgram;
     public string curProgram;
-    private GameObject gameController;
+    public string prevProgram = "Stand Ground";
     public GameObject curTarget;
     public GameObject curClosestBaseNow;
     private bool isAwake = false;
     // Use this for initialization
 	void Start ()
 	{
-	    gameController = GameObject.FindGameObjectWithTag("GameController");
-	    UnitInitialization(curTeam, unitType);
+	    UnitInitialization(curTeam, unitType);        
 	    isAwake = true;
 	}
 	
@@ -40,20 +41,23 @@ public class UnitController : MonoBehaviour {
 	    {
             curTeam = ThisUnit._CurTeam;
 	    }
-        if (curTeam != null && ThisUnit._CurTeam != null)
-        {
-	        curTarget = ThisUnit.Shoot(curTarget);
-            if (isAwake && ThisUnit._UnitProgram == ProgramType.Guard)
-	        {
-	            curClosestBaseNow = ThisUnit.Move(gameController, curTarget, gameObject.transform);
-	        }
-	        else
-	        {
-	            curClosestBaseNow = ThisUnit.Move(gameController, curClosestBaseNow, gameObject.transform);
-	            isAwake = false;
-	        }
-	        ThisUnit.Death();
+
+	    if (ThisUnit._CurTarget != null)
+	    {
+	        ThisUnit.Aiming();
+	        ThisUnit._CurTarget = ThisUnit.Shoot(ThisUnit._CurTarget, NoColliderStr);
 	    }
+
+	    if (isAwake && ThisUnit._UnitProgram == ProgramType.Guard)
+	    {
+	        curTarget = ThisUnit.Move(ThisUnit._CurTarget, gameObject.transform);
+	    }
+	    else
+	    {
+	        curClosestBaseNow = ThisUnit.Move(curClosestBaseNow, gameObject.transform);
+	        isAwake = false;
+	    }
+	    ThisUnit.Death();
 	}
 
     private void UnitInitialization(string team, string curUnit)
@@ -61,28 +65,25 @@ public class UnitController : MonoBehaviour {
         switch (curUnit)
         {
             case "Infantry":
-                ThisUnit = new Infantry(team, ProgramType.NearestBase, gameObject)
+                ThisUnit = new Infantry(team, ProgramType.StandGround, gameObject)
                 {
-                    _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
                 };
                 break;
             case "Jeep":
-                ThisUnit = new Jeep(team, ProgramType.NearestBase, gameObject)
+                ThisUnit = new Jeep(team, ProgramType.StandGround, gameObject)
                 {
-                    _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
                 };
                 break;
             case "Tank":
-                ThisUnit = new Tank(team, ProgramType.NearestBase, gameObject)
+                ThisUnit = new Tank(team, ProgramType.StandGround, gameObject)
                 {
                     _DropTransform = gameObject.transform,                };
                 break;
             case "SAM":
-                ThisUnit = new SAM(team, ProgramType.NearestBase, gameObject)
+                ThisUnit = new SAM(team, ProgramType.StandGround, gameObject)
                 {
-                    _CurrentTransform = gameObject.transform,
                     _DropTransform = gameObject.transform,
                 };
                 break;
@@ -96,10 +97,18 @@ public class UnitController : MonoBehaviour {
                 ThisUnit = new SmallBase(team, ProgramType.NearestBase, gameObject);
                 break;
             case "Shot":
-                ThisUnit = new Shot(team, gameObject);
+                ThisUnit = new Shot(team, gameObject)
+                {
+                    _DropTransform = gameObject.transform,
+                    _Damage = dealDamage,
+                    _GunRange = gunRange
+                };
                 break;
             case "Missile":
-                ThisUnit = new Missile(team, gameObject);
+                ThisUnit = new Missile(team, gameObject)
+                {
+                    _DropTransform = gameObject.transform,
+                };
                 break;
             case "PlayerPlane":
                 ThisUnit = new PlayerPlane(team, gameObject);
@@ -130,12 +139,18 @@ public class UnitController : MonoBehaviour {
             case "Shot Fired":
                 ThisUnit._UnitProgram = ProgramType.Shot;
                 break;
+            case "Missile Fired":
+                ThisUnit._UnitProgram = ProgramType.Missile;
+                break;
         }
     }
 
-    public void InflictDamage(int damage)
+    void OnTriggerEnter(Collider other)
     {
-        //
+        if (other.GetComponentInParent<UnitController>() != null && ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != ThisUnit._CurTeam)
+        {
+            gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+        }
     }
 
 
