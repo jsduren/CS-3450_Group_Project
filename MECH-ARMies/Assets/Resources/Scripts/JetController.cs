@@ -11,7 +11,6 @@ public class JetController : MonoBehaviour
     private const int cargoCapacity = 1;
     private float speed = 60;
     private float fireRate = 0.25f;
-    //private float transformRate = .25f;
     private float shootSoundVolume = 1;
     private int startHeight = 35;
 
@@ -20,6 +19,7 @@ public class JetController : MonoBehaviour
     private GameObject humvee;
     private GameObject infantry;
     private GameObject turret;
+    private MenuController menuController;
 
     private AudioClip shotsFired;
     private GameObject shot;
@@ -49,6 +49,7 @@ public class JetController : MonoBehaviour
         turret = (GameObject)Resources.Load("Prefabs/Turret");
         shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
         shot = (GameObject)Resources.Load("Prefabs/Shot1");
+        menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
 
         shotingOrigins = gameObject.GetComponentsInChildren(typeof (Collider));
 
@@ -65,60 +66,69 @@ public class JetController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButton("Fire1") && Time.time > nextFire)
+        if (!menuController.IsVisible)
         {
-            nextFire = Time.time + fireRate;
-            playerAudio.clip = shotsFired;
-            playerAudio.volume = shootSoundVolume;
-            playerAudio.Play();
-            Instantiate(shot, shootingOrigin1.position, shootingOrigin1.rotation);
-            Instantiate(shot, shootingOrigin2.position, shootingOrigin2.rotation);
+            //Get out of this block if the menu is visible
 
-        }
+            if (Input.GetButton("Fire1") && Time.time > nextFire)
+            {
+                nextFire = Time.time + fireRate;
+                playerAudio.clip = shotsFired;
+                playerAudio.volume = shootSoundVolume;
+                playerAudio.Play();
+                Instantiate(shot, shootingOrigin1.position, shootingOrigin1.rotation);
+                Instantiate(shot, shootingOrigin2.position, shootingOrigin2.rotation);
 
-        if (Input.GetButtonDown("Change"))
-        {
-            SwitchPlayer();
-        }
+            }
 
-        if (Input.GetButtonDown("CargoDrop"))
-        {
-            if (cargoUsed == 1)
-                dropCargo(cargo);
+            if (Input.GetButtonDown("Change"))
+            {
+                SwitchPlayer();
+            }
+
+            if (Input.GetButtonDown("CargoDrop"))
+            {
+                if (cargoUsed == 1)
+                    dropCargo(cargo);
+            }
         }
+        Move();
     }
 
     void SwitchPlayer()
     {
-        Vector3 location = new Vector3(transform.position.x, 25.0f, transform.position.z);
+        var location = new Vector3(transform.position.x, 25.0f, transform.position.z);
         Instantiate(mech, location, transform.rotation);
         DestroyImmediate(gameObject);
-    }
-
-    void FixedUpdate()
-    {
-        Move();
     }
 
     void Move()
     {
         var x = Input.GetAxis("Horizontal");
         var z = Input.GetAxis("Vertical");
+        if (menuController.IsVisible)
+        {
+            x = 0;
+            z = 0;
+        }
         var movement = new Vector3(x, 0.0f, z);
         if (movement.magnitude <= 0)
         {
+            //this executes if the player is not pressing any buttons
             if (rigidbody.velocity.magnitude > 0.1f)
             {
+                //this slows down the jet slowly
                 rigidbody.velocity *= 0.1f;
             }
             else rigidbody.velocity *= 0;
-            return;
         }
-
-        rigidbody.velocity = movement * speed;
-        var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
-        var newRotation = Quaternion.Lerp(rigidbody.rotation, targetRotation, 15f * Time.deltaTime);
-        rigidbody.rotation = newRotation;
+        else
+        {
+            rigidbody.velocity = movement*speed;
+            var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+            var newRotation = Quaternion.Lerp(rigidbody.rotation, targetRotation, 15f*Time.deltaTime);
+            rigidbody.rotation = newRotation;
+        }
     }
 
     public void createCargo(string unit)
@@ -153,15 +163,15 @@ public class JetController : MonoBehaviour
     {
         if (cargoUnits.Count > 0)
         {
-            GameObject unit = cargoUnits.Last();
+            var unit = cargoUnits.Last();
 
-            float x = transform.position.x;
-            float y = 27.0f;
-            float z = transform.position.z;
+            var x = transform.position.x;
+            var y = 27.0f;
+            var z = transform.position.z;
 
-            Vector3 instantiation = new Vector3(x, y, z);
-            Vector3 movement = new Vector3(0, 90, 0);
-            Quaternion targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+            var instantiation = new Vector3(x, y, z);
+            var movement = new Vector3(0, 90, 0);
+            var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 
             Instantiate(unit, movement, transform.rotation);
 
@@ -183,7 +193,7 @@ public class JetController : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        GameObject cargo = other.gameObject;
+        var cargo = other.gameObject;
 
         if (Input.GetButtonDown("CargoMove"))
         {
