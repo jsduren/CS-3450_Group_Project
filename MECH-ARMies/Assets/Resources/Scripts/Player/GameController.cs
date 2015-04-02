@@ -86,10 +86,9 @@ public class GameController : MonoBehaviour {
 
                 for (var i = 0; i < 4; i++)
                 {
-                    var newUnit = (GameObject) Instantiate(infantryPrefab,
-                        new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y,
-                            enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
-                    newUnit.GetComponent<UnitController>().ThisUnit._UnitProgram = ProgramType.NearestBase;
+                    var newUnit = (GameObject) Instantiate(infantryPrefab, new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y, enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
+                    newUnit.GetComponent<UnitController>().curProgram = "Nearest Base";
+                    newUnit.GetComponent<UnitController>().curTeam = "Player2";
                 }
             }
             else if(enemyTick == 1000*5)
@@ -105,7 +104,8 @@ public class GameController : MonoBehaviour {
                     var newUnit = (GameObject)Instantiate(jeepPrefab,
                         new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y,
                             enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
-                    newUnit.GetComponent<UnitController>().ThisUnit._UnitProgram = ProgramType.AttackMain;
+                    newUnit.GetComponent<UnitController>().curProgram = "Attack Main";
+                    newUnit.GetComponent<UnitController>().curTeam = "Player2";
                 }
 
                 enemyTick = 0;
