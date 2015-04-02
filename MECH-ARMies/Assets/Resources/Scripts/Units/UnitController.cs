@@ -2,8 +2,6 @@
 using System.Collections;
 
 
-
-
 public class UnitController : MonoBehaviour {
 
     public Unit ThisUnit;
@@ -15,24 +13,36 @@ public class UnitController : MonoBehaviour {
     public string curProgram;
     public string prevProgram = "Stand Ground";
     public GameObject curTarget;
-    public GameObject curClosestBaseNow;
+    public GameObject curClosestBaseNow = null;
     private bool isAwake = false;
     // Use this for initialization
 	void Start ()
 	{
 	    UnitInitialization(curTeam, unitType);        
 	    isAwake = true;
+        if(ThisUnit != null)
+            rigidbody.freezeRotation = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+	    if (GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>().gameOver)
+	    {
+	        ThisUnit._CanShoot = false;
+	        ThisUnit._CanMove = false;
+	        ThisUnit._IsShootable = false;
+	    }
 
         //! For updating the class when the Program is changed 
 	    if (curProgram != prevProgram)
 	    {
 	        prevProgram = curProgram;
             ProgramChange(curProgram);
+	        
+            
 	    }
+
+        //Debug.Log(gameObject.transform);
 
 	    ThisUnit._CurrentTransform = gameObject.transform;
 
@@ -58,7 +68,7 @@ public class UnitController : MonoBehaviour {
 	        isAwake = false;
 	    }
 	    ThisUnit.Death();
-
+        
         ThisUnit.Move(null, null);
 
         if (Input.GetButton("Fire1"))
@@ -75,7 +85,7 @@ public class UnitController : MonoBehaviour {
         {
             ThisUnit.dropCargo();
         }
-
+        
 	}
 
     private void UnitInitialization(string team, string curUnit)
@@ -165,13 +175,9 @@ public class UnitController : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other == null) return;
-        var otherUnitController = other.GetComponentInParent<UnitController>();
-        if (otherUnitController == null) return;
-        if (ThisUnit == null || otherUnitController.ThisUnit == null) return;
-        if (ThisUnit._IsShootable && (otherUnitController.ThisUnit._UnitType == UType.Shot || otherUnitController.ThisUnit._UnitType == UType.Missile) && otherUnitController.ThisUnit._CurTeam != ThisUnit._CurTeam)
+        if (other.GetComponentInParent<UnitController>() != null && ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != ThisUnit._CurTeam)
         {
-            ThisUnit.TakeDamage(otherUnitController.ThisUnit._Damage, other.gameObject);
+            ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
         }
     }
 
@@ -181,8 +187,8 @@ public class UnitController : MonoBehaviour {
 
         if (Input.GetButtonDown("CargoMove"))
         {
-            if (ThisUnit.pickupCargo(cargo)) ;
-
+            if(ThisUnit.pickupCargo(cargo));
+                
         }
 
     }

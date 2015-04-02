@@ -58,7 +58,7 @@ public class MenuController : MonoBehaviour
 
         orderText = new[]
         {
-            "Attack Main", "Guard", "Stand Ground", "Nearest Base"
+            "Attack Main", "Guard", "Stand Ground", "Attack Nearest Object"
         };
 
         unitCosts = new[]

@@ -1,12 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Permissions;
-using System.Diagnostics;
+using UnityEngine;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
-using UnityEditor;
 using UnityEngine.UI;
 
 public enum UType
@@ -238,7 +233,7 @@ public static class BaseStaticValues
     // Shot Base Attributes
 	public static class Shot
 	{
-		public static readonly int Velocity = 250;
+		public static readonly int Velocity = 10;
 	}
 
     // Missile Base Attributes
@@ -252,7 +247,7 @@ public static class BaseStaticValues
 
 }
 
-public abstract class Unit : Object
+public abstract class Unit : MonoBehaviour
 {
     protected Unit()
     {
@@ -308,13 +303,13 @@ public abstract class Unit : Object
 
     public abstract Object[] _Cargo { get; set; }
 
-    public void TakeDamage(int damageAmount, GameObject shotGameObject)
+ public void TakeDamage(int damageAmount, GameObject shotGameObject)
     {
-        UnityEngine.Debug.Log(string.Format("TakeDamage Triggered {0}", _UnitGameObject.transform.position));
+        //UnityEngine.Debug.Log(string.Format("TakeDamage Triggered {0}", _UnitGameObject.transform.position));
         if (_IsShootable && !_IsDead)
         {
             _Life = _Life - damageAmount;
-            Destroy(shotGameObject);
+            //Destroy(shotGameObject);
             if (_Life <= 0)
             {
                 _IsDead = true;
@@ -368,7 +363,8 @@ public abstract class Unit : Object
 
     public virtual GameObject Shoot(GameObject curTargetGameObject, string strCollider)
     {
-        //UnityEngine.Debug.Log(string.Format("Shoot Triggered {0}", _UnitGameObject.transform.position));
+        
+            //Debug.Log(string.Format("Shoot Triggered {0}", _UnitGameObject.transform.position));
         if (curTargetGameObject.GetComponent<UnitController>() != null && _CurTarget != null && _CanShoot && !_IsDead)
         {
             if (_CurTarget.GetComponent<UnitController>() != null && _CurTarget.GetComponent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane && (_Weapons == WeaponsType.Guns || _Weapons == WeaponsType.GunsAndMissiles))
@@ -392,6 +388,8 @@ public abstract class Unit : Object
                 
             }
         }
+
+
         return curTargetGameObject;
     }
 
@@ -536,7 +534,7 @@ public abstract class Unit : Object
             _CanMove = false;
             _CanShoot = false;
             _IsShootable = false;
-            UnityEngine.Debug.Log("Death Called");
+
             if (_UnitType == UType.PlayerPlane || _UnitType == UType.PlayerMech)
             {
                 _UnitGameObject.SetActive(false);
@@ -571,14 +569,13 @@ public abstract class Unit : Object
         }
     }
 
-    public virtual void SwitchPlayer(GameObject gameObject) { }
-    public virtual void dropCargo() { }
-    public virtual void createCargo(string unit, string program) { }
+    public virtual void SwitchPlayer(GameObject gameObject){}
+    public virtual void dropCargo(){}
+    public virtual void createCargo(string unit, string program) {}
     public virtual bool pickupCargo(GameObject Cargo)
     {
         return false;
     }
-
     // Might need to implement this in the UnitController instead of the unit Class
     // Run when you hit the button for Transform/DropOff and PickUp
     public void TransformPickUpDropOff(GameObject unitPickUp = null)
@@ -1105,7 +1102,6 @@ public sealed class SAM : Unit
     public override GameObject _UnitGameObject { get; set; }
 }
 
-
 public sealed class Turret : Unit
 {
     public Turret()
@@ -1186,7 +1182,6 @@ public sealed class Turret : Unit
     public override Object[] _Cargo { get; set; }
     public override GameObject _UnitGameObject { get; set; }
 }
-
 
 public sealed class SmallBase : Unit
 {
@@ -1289,7 +1284,6 @@ public sealed class SmallBase : Unit
     public override Object[] _Cargo { get; set; }
     public override GameObject _UnitGameObject { get; set; }
 }
-
 
 public sealed class MainBase : Unit
 {
@@ -1537,7 +1531,7 @@ public sealed class Missile : Unit
 
 public sealed class PlayerPlane : Unit
 {
-
+    
     public PlayerPlane()
     {
         _Life = 1000000;
@@ -1563,10 +1557,10 @@ public sealed class PlayerPlane : Unit
         _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
 
 
-        _shotingOrigins = null;
+        _shotingOrigins = gameObject.GetComponentsInChildren<GunBarrelEnd>();
 
-        _shootingOrigin1 = null;
-        _shootingOrigin2 = null;
+        _shootingOrigin1 = _shotingOrigins[0].transform;
+        _shootingOrigin2 = _shotingOrigins[1].transform;
 
         _CurTeam = "Player1";
     }
@@ -1652,7 +1646,7 @@ public sealed class PlayerPlane : Unit
 
             GameObject theshot1 = Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation) as GameObject;
             GameObject theshot2 = Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation) as GameObject;
-
+           
             _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
 
             if (theshot1 != null && theshot1.GetComponent<UnitController>() != null)
@@ -1689,7 +1683,7 @@ public sealed class PlayerPlane : Unit
 
     public override GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
     {
-
+        
         var x = Input.GetAxis("Horizontal");
         var z = Input.GetAxis("Vertical");
         if (_menuController.IsVisible)
@@ -1762,12 +1756,12 @@ public sealed class PlayerPlane : Unit
             var rot = new Quaternion(0, 0, 0, 0);
             //var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 
-            GameObject newUnit = (GameObject)Instantiate(key, instantiation, rot);
+            GameObject newUnit = (GameObject) Instantiate(key, instantiation, rot);
             // newUnit = (GameObject) Instantiate(_cargo.Keys.First(), instantiation, rot);
 
             UnitController newUnitcontroller = newUnit.GetComponent<UnitController>();
 
-
+            
 
             switch (_cargo[_cargo.Keys.First()])
             {
@@ -1785,7 +1779,7 @@ public sealed class PlayerPlane : Unit
                     newUnitcontroller.curTeam = "Player1";
                     break;
                 case "Attack Nearest Object":
-                    newUnitcontroller.curProgram = "Nearest Base";
+                    newUnitcontroller.curProgram= "Nearest Base";
                     newUnitcontroller.curTeam = "Player1";
                     break;
                 default:
@@ -1794,8 +1788,8 @@ public sealed class PlayerPlane : Unit
                     break;
 
             }
-
-
+            
+           
 
             _cargoUsed--;
 
@@ -1851,7 +1845,7 @@ public sealed class PlayerPlane : Unit
     public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
     public override int _Damage { get; set; }
     public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
-    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set { } }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
@@ -1872,7 +1866,7 @@ public sealed class PlayerPlane : Unit
 
 public sealed class PlayerMech : Unit
 {
-
+    
     public PlayerMech()
     {
         _IsShootable = true;
@@ -1884,7 +1878,7 @@ public sealed class PlayerMech : Unit
     }
 
     public PlayerMech(
-        string curTeam,
+        string curTeam, 
         GameObject unitGameObject,
         ProgramType unitProgram = ProgramType.PlayerMech,
         UType unitType = UType.PlayerMech
@@ -1897,7 +1891,7 @@ public sealed class PlayerMech : Unit
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-
+        
     }
 
     public override bool _IsShootable { get; set; }
@@ -1932,7 +1926,7 @@ public sealed class PlayerMech : Unit
     public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
     public override int _Damage { get; set; }
     public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
-    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set { } }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }

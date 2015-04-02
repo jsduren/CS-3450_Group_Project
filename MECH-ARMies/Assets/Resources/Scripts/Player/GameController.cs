@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 	//private bool gameOverPlayer1;
@@ -19,12 +20,20 @@ public class GameController : MonoBehaviour {
 	
     Vector3 shipspawn = new Vector3(105.0f, 35.0f, 105.0f);
 
+    public bool gameOver = false;
+
+    private Animator anim;
+
+
 	// Use this for initialization
     void Start()
     {
+        anim = GameObject.FindGameObjectWithTag("UI").GetComponent<Animator>();
+
+
         Instantiate(MenuController);
 
-        for (var x = 0; x < BaseStaticValues.MainBaseArray.Length; x++)
+        for (int x = 0; x < BaseStaticValues.MainBaseArray.Length; x++)
         {
             BaseStaticValues.MainBaseArray[x] = GameObject.FindGameObjectWithTag("Player" + (x + 1) + "Base");
             //Debug.Log(string.Format("Main Base {0} Initialized",x+1));
@@ -32,7 +41,7 @@ public class GameController : MonoBehaviour {
 
         MenuController = GameObject.FindGameObjectWithTag("MenuController");
 
-        for (var i = 0; i < BaseStaticValues.SmallBaseArray.Length; i++)
+        for (int i = 0; i < BaseStaticValues.SmallBaseArray.Length; i++)
         {
             BaseStaticValues.SmallBaseArray[i] = GameObject.FindGameObjectWithTag("SmallBase" + (i + 1));
             //Debug.Log(string.Format("Small Base {0} Initialized",i+1));
@@ -47,36 +56,47 @@ public class GameController : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update ()
-	{
-	    EnemyLoop();
-	    foreach (var t in BaseStaticValues.MainBaseArray)
-	    {
-	        if (t != null && t.GetComponent<MainBaseHealth>().isDead)
-	        {
-	            if (t.GetComponent<ObjectAttributes>().currentTeam == "Player1")
-	            {
-	                //Put success script here
-	            }else{
-	                //Put failure script here
-	            }
-	        }
-	    }
+	void Update () 
+    {
 
-	    /*
+        EnemyLoop();
+
+        foreach (var t in BaseStaticValues.MainBaseArray)
+        {
+            if (t != null && t.GetComponent<UnitController>().ThisUnit._IsDead)
+            {
+                if (t.GetComponent<UnitController>().ThisUnit._CurTeam != "Player1")
+                {
+                    gameOver = true;
+                    GameOver("WIN!");
+                }
+                else
+                {
+                    gameOver = true;
+                    GameOver("LOSE!");
+                }
+            }
+        }
+
+
+
+		/*
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             bool IsVisible = _menuController.gameObject.GetComponent("IsVisible");
             IsVisible = !IsVisible;
         } */
+
+
+
 	}
 
     private void EnemyLoop()
     {
         enemyTick++;
-        if (enemyTick%1000 == 0)
+        if (enemyTick % 1000 == 0)
         {
-            if (enemyTick == 1000*2)
+            if (enemyTick == 1000 * 2)
             {
                 Debug.Log("Spawn infantry");
 
@@ -86,12 +106,12 @@ public class GameController : MonoBehaviour {
 
                 for (var i = 0; i < 4; i++)
                 {
-                    var newUnit = (GameObject) Instantiate(infantryPrefab, new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y, enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
+                    var newUnit = (GameObject)Instantiate(infantryPrefab, new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y, enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
                     newUnit.GetComponent<UnitController>().curProgram = "Nearest Base";
                     newUnit.GetComponent<UnitController>().curTeam = "Player2";
                 }
             }
-            else if(enemyTick == 1000*5)
+            else if (enemyTick == 1000 * 5)
             {
                 Debug.Log("Spawn jeep");
 
@@ -110,8 +130,13 @@ public class GameController : MonoBehaviour {
 
                 enemyTick = 0;
             }
-            else if (enemyTick > 1000*5)
+            else if (enemyTick > 1000 * 5)
                 enemyTick = 0;
         }
+    }
+
+    public void GameOver(string status)
+    {
+         anim.SetBool("game_over", true);
     }
 }
