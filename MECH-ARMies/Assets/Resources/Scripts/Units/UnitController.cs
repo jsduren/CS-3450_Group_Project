@@ -147,11 +147,13 @@ public class UnitController : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponentInParent<UnitController>() != null && ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != ThisUnit._CurTeam)
+        if (other == null) return;
+        var otherUnitController = other.GetComponentInParent<UnitController>();
+        if (otherUnitController == null) return;
+        if (ThisUnit == null || otherUnitController.ThisUnit == null) return;
+        if (ThisUnit._IsShootable && (otherUnitController.ThisUnit._UnitType == UType.Shot || otherUnitController.ThisUnit._UnitType == UType.Missile) && otherUnitController.ThisUnit._CurTeam != ThisUnit._CurTeam)
         {
-            gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+            gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(otherUnitController.ThisUnit._Damage, other.gameObject);
         }
     }
-
-
 }

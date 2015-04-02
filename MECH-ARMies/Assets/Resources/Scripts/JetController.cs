@@ -44,9 +44,9 @@ public class JetController : MonoBehaviour
     void Start()
     {
         mech = (GameObject)Resources.Load("Prefabs/Mech");
-        humvee = (GameObject)Resources.Load("Prefabs/Humvee");
-        infantry = (GameObject)Resources.Load("Prefabs/Infantry");
-        turret = (GameObject)Resources.Load("Prefabs/Turret");
+        humvee = (GameObject)Resources.Load("Prefabs/JeepV2");
+        infantry = (GameObject)Resources.Load("Prefabs/InfantryV2");
+        turret = (GameObject)Resources.Load("Prefabs/Turret1");
         shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
         shot = (GameObject)Resources.Load("Prefabs/Shot1");
         menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
@@ -60,6 +60,7 @@ public class JetController : MonoBehaviour
 
         var newPosition = new Vector3(transform.position.x, startHeight, transform.position.z);
         gameObject.transform.position = newPosition;
+        rigidbody.freezeRotation = true;
 
         currentTeam = "Team1";
     }
@@ -125,6 +126,7 @@ public class JetController : MonoBehaviour
         else
         {
             rigidbody.velocity = movement*speed;
+
             var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
             var newRotation = Quaternion.Lerp(rigidbody.rotation, targetRotation, 15f*Time.deltaTime);
             rigidbody.rotation = newRotation;
