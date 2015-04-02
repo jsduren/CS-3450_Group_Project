@@ -47,18 +47,18 @@ public class MenuController : MonoBehaviour
 
         orders = new[]
         {
-            (Texture) Resources.Load("Textures/AdvanceButton"),
+            
             (Texture) Resources.Load("Textures/AttackMainButton"),
             (Texture) Resources.Load("Textures/GuardButton"),
             (Texture) Resources.Load("Textures/StandGroundButton"),
-            (Texture) Resources.Load("Textures/ResupplyButton"),
-            (Texture) Resources.Load("Textures/CircleButton")
+            (Texture) Resources.Load("Textures/AdvanceButton")
+            //(Texture) Resources.Load("Textures/ResupplyButton"),
+            //(Texture) Resources.Load("Textures/CircleButton")
         };
 
         orderText = new[]
         {
-            "Advance", "Attack Main", "Guard",
-            "Stand Ground", "Resupply", "Circle"
+            "Attack Main", "Guard", "Stand Ground", "Nearest Base"
         };
 
         unitCosts = new[]
@@ -192,7 +192,7 @@ public class MenuController : MonoBehaviour
     }
     private void ConstructButton()
     {
-        ConstructUnit(unitText[unitIndex]);
+        ConstructUnit(unitText[unitIndex], orderText[orderIndex]);        
     }
 
     private void SetSelected(int index)
@@ -262,11 +262,10 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    private void ConstructUnit(string unit)
+    private void ConstructUnit(string unit, string program)
     {
         jet = GameObject.FindWithTag("Player");
-        JetController jetController = (JetController)jet.GetComponent(typeof(JetController));
-        jetController.createCargo(unit);
+        jet.GetComponent<UnitController>().ThisUnit.createCargo(unit, program);
         IsVisible = false;
     }
 

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Security.Permissions;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -364,7 +366,7 @@ public abstract class Unit : Object
         }
     }
 
-    public GameObject Shoot(GameObject curTargetGameObject, string strCollider)
+    public virtual GameObject Shoot(GameObject curTargetGameObject, string strCollider)
     {
         //UnityEngine.Debug.Log(string.Format("Shoot Triggered {0}", _UnitGameObject.transform.position));
         if (curTargetGameObject.GetComponent<UnitController>() != null && _CurTarget != null && _CanShoot && !_IsDead)
@@ -393,7 +395,7 @@ public abstract class Unit : Object
         return curTargetGameObject;
     }
 
-    public GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
+    public virtual GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
     {
         //UnityEngine.Debug.Log("Running Move Function");
         if (_CanMove && !_IsDead && _UnitProgram != ProgramType.StandGround)
@@ -569,6 +571,13 @@ public abstract class Unit : Object
         }
     }
 
+    public virtual void SwitchPlayer(GameObject gameObject) { }
+    public virtual void dropCargo() { }
+    public virtual void createCargo(string unit, string program) { }
+    public virtual bool pickupCargo(GameObject Cargo)
+    {
+        return false;
+    }
 
     // Might need to implement this in the UnitController instead of the unit Class
     // Run when you hit the button for Transform/DropOff and PickUp
@@ -1528,15 +1537,38 @@ public sealed class Missile : Unit
 
 public sealed class PlayerPlane : Unit
 {
-    
+
     public PlayerPlane()
     {
+        _Life = 1000000;
+        _GunAttackDamage = 100;
         _IsShootable = true;
         _CanShoot = true;
         _IsCapturable = false;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = null;
+        _CargoCapacity = 1;
+        _speed = 60;
+        _fireRate = 0.25f;
+        _shootSoundVolume = 1;
+        _startHeight = 35;
+        _cargoUsed = 0;
+        _mech = (GameObject)Resources.Load("Prefabs/Mech");
+        _humvee = (GameObject)Resources.Load("Prefabs/Humvee");
+        _infantry = (GameObject)Resources.Load("Prefabs/Infantry");
+        _turret = (GameObject)Resources.Load("Prefabs/Turret");
+        _shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
+        _shot = (GameObject)Resources.Load("Prefabs/Shot");
+        _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
+
+
+        _shotingOrigins = null;
+
+        _shootingOrigin1 = null;
+        _shootingOrigin2 = null;
+
+        _CurTeam = "Player1";
     }
 
     public PlayerPlane(
@@ -1547,13 +1579,244 @@ public sealed class PlayerPlane : Unit
         )
         : base(curTeam, unitProgram, unitType)
     {
+        _Life = 1000000;
         _IsShootable = true;
         _CanShoot = true;
         _IsCapturable = false;
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
+        _CargoCapacity = 1;
+        _speed = 60;
+        _fireRate = 0.25f;
+        _shootSoundVolume = 1;
+        _startHeight = 35;
+        _cargoUsed = 0;
+        _mech = (GameObject)Resources.Load("Prefabs/Mech");
+        _humvee = (GameObject)Resources.Load("Prefabs/JeepV2");
+        _infantry = (GameObject)Resources.Load("Prefabs/InfantryV2");
+        _turret = (GameObject)Resources.Load("Prefabs/Turret");
+        _shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
+        _shot = (GameObject)Resources.Load("Prefabs/Shot");
+        _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
+        _GunAttackDamage = 100;
+        _CurTeam = "Player1";
+    }
 
+
+    private float _speed;
+    private float _fireRate;
+    private float _shootSoundVolume;
+    private int _startHeight;
+    private int _cargoUsed;
+
+    private GameObject _mech;
+    private GameObject _humvee;
+    private GameObject _infantry;
+    private GameObject _turret;
+    private MenuController _menuController;
+
+    private AudioClip _shotsFired;
+    private GameObject _shot;
+    private Transform _shootingOrigin1;
+    private Transform _shootingOrigin2;
+    private Dictionary<GameObject, string> _cargo = new Dictionary<GameObject, string>();
+    //private List<GameObject> _cargo = new List<GameObject>();
+    private float _nextFire;
+    AudioSource _playerAudio;
+
+    private GunBarrelEnd[] _shotingOrigins;
+
+    public string CurrentTeam;
+
+    private static Dictionary<UType, string> UtypeString = new Dictionary<UType, string>
+    {
+        {UType.Infantry, "Infantry"},
+        {UType.Jeep, "Humvee"},
+        {UType.Turret, "Turret"},
+    };
+
+    public override GameObject Shoot(GameObject curTargetGameObject, string strCollider)
+    {
+
+        _shotingOrigins = curTargetGameObject.GetComponentsInChildren<GunBarrelEnd>();
+
+        _shootingOrigin1 = _shotingOrigins[0].transform;
+        _shootingOrigin2 = _shotingOrigins[1].transform;
+
+        _nextFire = Time.time + _fireRate;
+
+        if (_shootingOrigin1 != null && _nextFire <= Time.time)
+        {
+            _nextFire = Time.time + _fireRate;
+
+            GameObject theshot1 = Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation) as GameObject;
+            GameObject theshot2 = Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation) as GameObject;
+
+            _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
+
+            if (theshot1 != null && theshot1.GetComponent<UnitController>() != null)
+            {
+                theshot1.GetComponent<UnitController>().curTeam = _CurTeam;
+                theshot1.GetComponent<UnitController>().dealDamage = _GunAttackDamage;
+                theshot1.GetComponent<UnitController>().gunRange = _GunRange;
+            }
+
+            if (theshot2 != null && theshot2.GetComponent<UnitController>() != null)
+            {
+                theshot2.GetComponent<UnitController>().curTeam = _CurTeam;
+                theshot2.GetComponent<UnitController>().dealDamage = _GunAttackDamage;
+                theshot2.GetComponent<UnitController>().gunRange = _GunRange;
+            }
+        }
+
+
+        //_playerAudio.clip = _shotsFired;
+        //_playerAudio.volume = _shootSoundVolume;
+        //_playerAudio.Play();
+        Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation);
+        Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation);
+
+        return base.Shoot(curTargetGameObject, strCollider);
+    }
+
+    public override void SwitchPlayer(GameObject gameObject)
+    {
+        var location = new Vector3(_UnitGameObject.transform.position.x, 25.0f, _UnitGameObject.transform.position.z);
+        Instantiate(_mech, location, _UnitGameObject.transform.rotation);
+        DestroyImmediate(_UnitGameObject);
+    }
+
+    public override GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
+    {
+
+        var x = Input.GetAxis("Horizontal");
+        var z = Input.GetAxis("Vertical");
+        if (_menuController.IsVisible)
+        {
+            x = 0;
+            z = 0;
+        }
+        var movement = new Vector3(x, 0.0f, z);
+        if (movement.magnitude <= 0)
+        {
+            //this executes if the player is not pressing any buttons
+            if (_UnitGameObject.rigidbody.velocity.magnitude > 0.1f)
+            {
+                //this slows down the jet slowly
+                _UnitGameObject.rigidbody.velocity *= 0.1f;
+            }
+            else _UnitGameObject.rigidbody.velocity *= 0;
+        }
+        else
+        {
+            _UnitGameObject.rigidbody.velocity = movement * _speed;
+            var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+            var newRotation = Quaternion.Lerp(_UnitGameObject.rigidbody.rotation, targetRotation, 15f * Time.deltaTime);
+            _UnitGameObject.rigidbody.rotation = newRotation;
+        }
+        return base.Move(_UnitGameObject, _UnitGameObject.transform);
+    }
+
+
+    public override void createCargo(string unit, string program)
+    {
+        if (_cargoUsed < 1)
+        {
+            switch (unit)
+            {
+                case "Humvee":
+                    _cargo.Add(_humvee, program);
+                    _cargoUsed++;
+                    break;
+                case "Infantry":
+                    _cargo.Add(_infantry, program);
+                    _cargoUsed++;
+                    break;
+                case "Turret":
+                    _cargo.Add(_turret, program);
+                    _cargoUsed++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            //string display = "not enough room";
+        }
+    }
+
+    public override void dropCargo()
+    {
+        if (_cargo.Count > 0)
+        {
+            var key = _cargo.Keys.First();
+
+            var x = _UnitGameObject.transform.position.x;
+            var y = 27.0f;
+            var z = _UnitGameObject.transform.position.z;
+
+            var instantiation = new Vector3(x, y, z);
+            //var movement = new Vector3(0, 90, 0);
+            var rot = new Quaternion(0, 0, 0, 0);
+            //var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+
+            GameObject newUnit = (GameObject)Instantiate(key, instantiation, rot);
+            // newUnit = (GameObject) Instantiate(_cargo.Keys.First(), instantiation, rot);
+
+            UnitController newUnitcontroller = newUnit.GetComponent<UnitController>();
+
+
+
+            switch (_cargo[_cargo.Keys.First()])
+            {
+
+                case "Attack Main":
+                    newUnitcontroller.curProgram = "Attack Main";
+                    newUnitcontroller.curTeam = "Player1";
+                    break;
+                case "Guard":
+                    newUnitcontroller.curProgram = "Guard";
+                    newUnitcontroller.curTeam = "Player1";
+                    break;
+                case "Stand Ground":
+                    newUnitcontroller.curProgram = "Stand Ground";
+                    newUnitcontroller.curTeam = "Player1";
+                    break;
+                case "Attack Nearest Object":
+                    newUnitcontroller.curProgram = "Nearest Base";
+                    newUnitcontroller.curTeam = "Player1";
+                    break;
+                default:
+                    newUnitcontroller.curProgram = "Ground";
+                    newUnitcontroller.curTeam = "Player1";
+                    break;
+
+            }
+
+
+
+            _cargoUsed--;
+
+            _cargo.Remove(_cargo.Keys.First());
+
+        }
+    }
+
+    public override bool pickupCargo(GameObject Cargo)
+    {
+        if (UtypeString.ContainsValue(Cargo.tag))
+        {
+            var ptype = Cargo.GetComponent(_UnitProgram.ToString());
+            createCargo(Cargo.tag, ptype.ToString());
+            Destroy(Cargo);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -1588,7 +1851,7 @@ public sealed class PlayerPlane : Unit
     public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
     public override int _Damage { get; set; }
     public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
-    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set { } }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
@@ -1609,7 +1872,7 @@ public sealed class PlayerPlane : Unit
 
 public sealed class PlayerMech : Unit
 {
-    
+
     public PlayerMech()
     {
         _IsShootable = true;
@@ -1621,7 +1884,7 @@ public sealed class PlayerMech : Unit
     }
 
     public PlayerMech(
-        string curTeam, 
+        string curTeam,
         GameObject unitGameObject,
         ProgramType unitProgram = ProgramType.PlayerMech,
         UType unitType = UType.PlayerMech
@@ -1634,7 +1897,7 @@ public sealed class PlayerMech : Unit
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-        
+
     }
 
     public override bool _IsShootable { get; set; }
@@ -1669,7 +1932,7 @@ public sealed class PlayerMech : Unit
     public override int _CargoCapacity { get { return BaseStaticValues.Player.MaxCargoCapacity; } set { } }
     public override int _Damage { get; set; }
     public override float _GunFireRate { get { return BaseStaticValues.Player.FireRate; } set { } }
-    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set {} }
+    public override Transform _CurrentTransform { get { return _UnitGameObject.transform; } set { } }
     public override Transform _DropTransform { get; set; }
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }

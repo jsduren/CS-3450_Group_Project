@@ -58,6 +58,24 @@ public class UnitController : MonoBehaviour {
 	        isAwake = false;
 	    }
 	    ThisUnit.Death();
+
+        ThisUnit.Move(null, null);
+
+        if (Input.GetButton("Fire1"))
+        {
+            ThisUnit.Shoot(gameObject, "Jet");
+        }
+
+        if (Input.GetButtonDown("Change"))
+        {
+            ThisUnit.SwitchPlayer(gameObject);
+        }
+
+        if (Input.GetButtonDown("CargoDrop"))
+        {
+            ThisUnit.dropCargo();
+        }
+
 	}
 
     private void UnitInitialization(string team, string curUnit)
@@ -153,7 +171,20 @@ public class UnitController : MonoBehaviour {
         if (ThisUnit == null || otherUnitController.ThisUnit == null) return;
         if (ThisUnit._IsShootable && (otherUnitController.ThisUnit._UnitType == UType.Shot || otherUnitController.ThisUnit._UnitType == UType.Missile) && otherUnitController.ThisUnit._CurTeam != ThisUnit._CurTeam)
         {
-            gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(otherUnitController.ThisUnit._Damage, other.gameObject);
+            ThisUnit.TakeDamage(otherUnitController.ThisUnit._Damage, other.gameObject);
         }
     }
+
+    void OnTriggerStay(Collider other)
+    {
+        var cargo = other.gameObject;
+
+        if (Input.GetButtonDown("CargoMove"))
+        {
+            if (ThisUnit.pickupCargo(cargo)) ;
+
+        }
+
+    }
+
 }
