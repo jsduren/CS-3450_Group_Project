@@ -78,13 +78,15 @@ public class UnitController : MonoBehaviour {
 
         if (Input.GetButtonDown("Change"))
         {
-            ThisUnit.SwitchPlayer(gameObject);
+            //ThisUnit.SwitchPlayer(gameObject);
         }
 
         if (Input.GetButtonDown("CargoDrop"))
         {
             ThisUnit.dropCargo();
         }
+
+	    
         
 	}
 
@@ -184,10 +186,11 @@ public class UnitController : MonoBehaviour {
     void OnTriggerStay(Collider other)
     {
         var cargo = other.gameObject;
+        
 
         if (Input.GetButtonDown("CargoMove"))
         {
-            if(ThisUnit.pickupCargo(cargo));
+            ThisUnit.pickupCargo(cargo);
                 
         }
 

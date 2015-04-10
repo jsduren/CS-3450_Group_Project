@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour {
     public GameObject gunShot;
     public GameObject missileShot;
 
-    private int enemyTick = 1000;
+    private int enemyTick = 500;
     private GameObject infantryPrefab;
     private GameObject jeepPrefab;
 	
@@ -94,11 +94,11 @@ public class GameController : MonoBehaviour {
     private void EnemyLoop()
     {
         enemyTick++;
-        if (enemyTick % 1000 == 0)
+        if (enemyTick % 500 == 0)
         {
-            if (enemyTick == 1000 * 2)
+            if (enemyTick == 500 * 2)
             {
-                Debug.Log("Spawn infantry");
+
 
                 //create infantry
                 var enemyBasePosition = BaseStaticValues.MainBaseArray[1].gameObject.transform.position;
@@ -111,9 +111,9 @@ public class GameController : MonoBehaviour {
                     newUnit.GetComponent<UnitController>().curTeam = "Player2";
                 }
             }
-            else if (enemyTick == 1000 * 5)
+            else if (enemyTick == 500 * 5)
             {
-                Debug.Log("Spawn jeep");
+
 
                 //create vehicles
                 var enemyBasePosition = BaseStaticValues.MainBaseArray[1].gameObject.transform.position;
@@ -130,7 +130,7 @@ public class GameController : MonoBehaviour {
 
                 enemyTick = 0;
             }
-            else if (enemyTick > 1000 * 5)
+            else if (enemyTick > 500 * 5)
                 enemyTick = 0;
         }
     }

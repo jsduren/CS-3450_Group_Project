@@ -42,7 +42,7 @@ public class MenuController : MonoBehaviour
         {
             (Texture) Resources.Load("Textures/Infantry"),
             (Texture) Resources.Load("Textures/Jeep"),
-            (Texture) Resources.Load("Textures/Turret")
+            //(Texture) Resources.Load("Textures/Turret")
         };
 
         orders = new[]
@@ -220,7 +220,13 @@ public class MenuController : MonoBehaviour
 
         if (IsVisible)
         {
-            if (_keyCooldown > 0) _keyCooldown--;
+            if (_keyCooldown > 0)
+            {
+                if (Math.Abs(Input.GetAxis("Horizontal")) < 0.001f && Math.Abs(Input.GetAxis("Vertical")) < 0.001f)
+                {
+                    _keyCooldown = 0;
+                }
+            }
             else
             {
                 if (Input.GetAxis("Vertical") > 0)

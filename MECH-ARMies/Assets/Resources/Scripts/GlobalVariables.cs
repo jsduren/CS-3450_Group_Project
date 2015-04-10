@@ -60,12 +60,12 @@ public static class BaseStaticValues
     // Max Player values for initializing
     public static class Player
     {
-        public static readonly int MaxLife = 100;
-        public static readonly int MaxGuns = 50;
-        public static readonly float MaxEnergy = 100;
-        public static readonly int GunDamage = 20;
-        public static readonly float FireRate = 0.3f;
-        public static readonly float GunRange = 30f;
+        public static readonly int MaxLife = 1000;
+        public static readonly int MaxGuns = 5;
+        public static readonly float MaxEnergy = 1000;
+        public static readonly int GunDamage = 1;
+        public static readonly float FireRate = 100.0f;
+        public static readonly float GunRange = 60f;
         public static readonly float TransformRate = 1f;
         public static readonly float PickUpDropOffRate = .25f;
 
@@ -106,14 +106,14 @@ public static class BaseStaticValues
     // Infantry Base Attributes
     public class Infantry : Object
     {
-        public const int MaxLife = 100;
+        public const int MaxLife = 70;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
         
         public static readonly float LineOfSight = 30;
-        public static readonly float GunRange = 20;
-        public static readonly int GunDamage = 10;
-        public static readonly float GunFireRate = 0.2f;
+        public static readonly float GunRange = 40;
+        public static readonly int GunDamage = 5;
+        public static readonly float GunFireRate = 1.0f;
         public static readonly int CargoSpace = 1;
         public static readonly int Cost = 40;
         public static readonly float ProductionTime = 3f;
@@ -132,14 +132,14 @@ public static class BaseStaticValues
     // Jeep Base Attributes
     public class Jeep : Object
 	{
-        public const int MaxLife = 250;
+        public const int MaxLife = 100;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
 
 		public static readonly float LineOfSight = 40;
-		public static readonly float GunRange = 30;
-		public static readonly int GunDamage = 20;
-		public static readonly float GunFireRate = 0.2f;
+		public static readonly float GunRange = 50;
+		public static readonly int GunDamage = 10;
+		public static readonly float GunFireRate = 1.0f;
         public static readonly int CargoSpace = 2;
 		public static readonly int Cost = 40;
 		public static readonly float ProductionTime = 3f;
@@ -572,9 +572,9 @@ public abstract class Unit : MonoBehaviour
     public virtual void SwitchPlayer(GameObject gameObject){}
     public virtual void dropCargo(){}
     public virtual void createCargo(string unit, string program) {}
-    public virtual bool pickupCargo(GameObject Cargo)
+    public virtual void pickupCargo(GameObject Cargo)
     {
-        return false;
+        
     }
     // Might need to implement this in the UnitController instead of the unit Class
     // Run when you hit the button for Transform/DropOff and PickUp
@@ -1535,7 +1535,7 @@ public sealed class PlayerPlane : Unit
     public PlayerPlane()
     {
         _Life = 1000000;
-        _GunAttackDamage = 100;
+        _GunAttackDamage = 500;
         _IsShootable = true;
         _CanShoot = true;
         _IsCapturable = false;
@@ -1544,7 +1544,7 @@ public sealed class PlayerPlane : Unit
         _UnitGameObject = null;
         _CargoCapacity = 1;
         _speed = 60;
-        _fireRate = 0.25f;
+        _fireRate = 0.3f;
         _shootSoundVolume = 1;
         _startHeight = 35;
         _cargoUsed = 0;
@@ -1555,6 +1555,7 @@ public sealed class PlayerPlane : Unit
         _shotsFired = (AudioClip)Resources.Load("Audio/UnitShotsFired");
         _shot = (GameObject)Resources.Load("Prefabs/Shot");
         _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
+      
 
 
         _shotingOrigins = gameObject.GetComponentsInChildren<GunBarrelEnd>();
@@ -1582,7 +1583,7 @@ public sealed class PlayerPlane : Unit
         _UnitGameObject = unitGameObject;
         _CargoCapacity = 1;
         _speed = 60;
-        _fireRate = 0.25f;
+        _fireRate = 0.3f;
         _shootSoundVolume = 1;
         _startHeight = 35;
         _cargoUsed = 0;
@@ -1595,6 +1596,7 @@ public sealed class PlayerPlane : Unit
         _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
         _GunAttackDamage = 100;
         _CurTeam = "Player1";
+        
     }
 
 
@@ -1638,7 +1640,7 @@ public sealed class PlayerPlane : Unit
         _shootingOrigin1 = _shotingOrigins[0].transform;
         _shootingOrigin2 = _shotingOrigins[1].transform;
 
-        _nextFire = Time.time + _fireRate;
+        //_nextFire = Time.time + _fireRate;
 
         if (_shootingOrigin1 != null && _nextFire <= Time.time)
         {
@@ -1647,7 +1649,7 @@ public sealed class PlayerPlane : Unit
             GameObject theshot1 = Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation) as GameObject;
             GameObject theshot2 = Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation) as GameObject;
            
-            _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
+            //_UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
 
             if (theshot1 != null && theshot1.GetComponent<UnitController>() != null)
             {
@@ -1668,8 +1670,8 @@ public sealed class PlayerPlane : Unit
         //_playerAudio.clip = _shotsFired;
         //_playerAudio.volume = _shootSoundVolume;
         //_playerAudio.Play();
-        Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation);
-        Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation);
+        //Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation);
+        //Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation);
 
         return base.Shoot(curTargetGameObject, strCollider);
     }
@@ -1707,6 +1709,7 @@ public sealed class PlayerPlane : Unit
             _UnitGameObject.rigidbody.velocity = movement * _speed;
             var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
             var newRotation = Quaternion.Lerp(_UnitGameObject.rigidbody.rotation, targetRotation, 15f * Time.deltaTime);
+            _UnitGameObject.rigidbody.freezeRotation = true;
             _UnitGameObject.rigidbody.rotation = newRotation;
         }
         return base.Move(_UnitGameObject, _UnitGameObject.transform);
@@ -1798,19 +1801,15 @@ public sealed class PlayerPlane : Unit
         }
     }
 
-    public override bool pickupCargo(GameObject Cargo)
+    public override void pickupCargo(GameObject Cargo)
     {
-        if (UtypeString.ContainsValue(Cargo.tag))
-        {
-            var ptype = Cargo.GetComponent(_UnitProgram.ToString());
-            createCargo(Cargo.tag, ptype.ToString());
-            Destroy(Cargo);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        UnitController cargoUnitController = Cargo.gameObject.GetComponentInChildren<UnitController>();
+        Debug.Log(cargoUnitController);
+        createCargo(cargoUnitController.unitType, cargoUnitController.curProgram );
+        //Destroy(Cargo);
+        
+
     }
 
     public override bool _IsShootable { get; set; }
