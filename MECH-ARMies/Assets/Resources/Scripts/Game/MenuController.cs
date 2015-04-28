@@ -43,7 +43,7 @@ public class MenuController : MonoBehaviour
         {
             (Texture) Resources.Load("Textures/Infantry"),
             (Texture) Resources.Load("Textures/Jeep"),
-            (Texture) Resources.Load("Textures/Turret")
+            //(Texture) Resources.Load("Textures/Turret")
         };
 
         orders = new[]
