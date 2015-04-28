@@ -16,6 +16,8 @@ public class UnitController : MonoBehaviour {
     public GameObject possibleTarget = null;
     public GameObject curClosestBaseNow = null;
     private bool isAwake = false;
+    public bool canDrop = false;
+    public bool canCreate = false;
 
     void Awake()
     {
@@ -69,7 +71,6 @@ public class UnitController : MonoBehaviour {
 
 	        if (Input.GetButtonDown("CargoDrop"))
             {
-                Debug.Log("wassupppppppppddd");
 	            ThisUnit.dropCargo();
 	        }
 	    }

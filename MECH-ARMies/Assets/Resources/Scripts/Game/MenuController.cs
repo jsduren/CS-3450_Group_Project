@@ -31,6 +31,7 @@ public class MenuController : MonoBehaviour
     private Color defaultColor;
     private Color disableColor;
     private int _keyCooldown = 0;
+    public bool canOpen = true;
 
     private void Start()
     {
@@ -212,11 +213,14 @@ public class MenuController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (canOpen)
         {
-            IsVisible = !IsVisible;
-            if (IsVisible)
-                currentIndex = 0;
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                IsVisible = !IsVisible;
+                if (IsVisible)
+                    currentIndex = 0;
+            }
         }
 
         if (IsVisible)
