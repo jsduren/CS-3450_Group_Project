@@ -192,6 +192,7 @@ public class MenuController : MonoBehaviour
     }
     private void ConstructButton()
     {
+        Debug.Log("yoyoyo");
         ConstructUnit(unitText[unitIndex], orderText[orderIndex]);        
     }
 
@@ -223,6 +224,8 @@ public class MenuController : MonoBehaviour
             if (_keyCooldown > 0) _keyCooldown--;
             else
             {
+                if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                    ConstructButton();
                 if (Input.GetAxis("Vertical") > 0)
                 {
                     currentIndex = Math.Max(currentIndex - 1, 0);

@@ -577,10 +577,11 @@ public abstract class Unit : Object
     }
 
     public virtual void SwitchPlayer(GameObject gameObject){}
-    public virtual void dropCargo(){}
-    public virtual void createCargo(string unit, string program) {}
+    public virtual void dropCargo() { Debug.Log("wwwwwwwwwassuppppppppp"); }
+    public virtual void createCargo(string unit, string program) { Debug.Log("wasssssssssssuppppppppp"); }
     public virtual bool pickupCargo(GameObject Cargo)
     {
+        Debug.Log("wassuppppppppp");
         return false;
     }
     // Might need to implement this in the UnitController instead of the unit Class
@@ -1555,6 +1556,25 @@ public sealed class Missile : Unit
     public override GameObject _UnitGameObject { get; set; }
 }
 
+public class UnitProgram
+{
+    public UnitProgram(GameObject obj, string program)
+    {
+        _GameObject = obj;
+        _Program = program;
+    }
+    public GameObject _GameObject
+    {
+        get;
+        set;
+    }
+    public string _Program
+    {
+        get;
+        set;
+    }
+}
+
 public sealed class PlayerPlane : Unit
 {
     
@@ -1594,10 +1614,10 @@ public sealed class PlayerPlane : Unit
         _CargoCapacity = 1;
         _startHeight = 35;
         _cargoUsed = 0;
-        _mech = (GameObject)Resources.Load("Prefabs/Mech");
-        _humvee = (GameObject)Resources.Load("Prefabs/Jeep");
-        _infantry = (GameObject)Resources.Load("Prefabs/Infantry");
-        _turret = (GameObject)Resources.Load("Prefabs/Turret");
+        _mech = (GameObject)Resources.Load("LatestPrefabVersions/Mech");
+        _humvee = (GameObject)Resources.Load("LatestPrefabVersions/Jeep");
+        _infantry = (GameObject)Resources.Load("LatestPrefabVersions/Infantry");
+        _turret = (GameObject)Resources.Load("LatestPrefabVersions/Turret");
         _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
         _CurTeam = "Player1";
     }
@@ -1612,7 +1632,8 @@ public sealed class PlayerPlane : Unit
     private GameObject _turret;
     private MenuController _menuController;
 
-   private Dictionary<GameObject, string> _cargo = new Dictionary<GameObject, string>();
+
+    public List<UnitProgram> _cargo = new List<UnitProgram>();
     //private List<GameObject> _cargo = new List<GameObject>();
     private float _nextFire;
     AudioSource _playerAudio;
@@ -1714,20 +1735,20 @@ public sealed class PlayerPlane : Unit
 
     public override void createCargo(string unit, string program)
     {
-        if (_cargoUsed < 1)
+        if (_cargoUsed < 3)
         {
             switch (unit)
             {
                 case "Humvee":
-                    _cargo.Add(_humvee, program);
+                    _cargo.Add(new UnitProgram(_humvee, program));
                     _cargoUsed++;
                     break;
                 case "Infantry":
-                    _cargo.Add(_infantry, program);
+                    _cargo.Add(new UnitProgram(_infantry, program));
                     _cargoUsed++;
                     break;
                 case "Turret":
-                    _cargo.Add(_turret, program);
+                    _cargo.Add(new UnitProgram(_turret, program));
                     _cargoUsed++;
                     break;
                 default:
@@ -1738,13 +1759,16 @@ public sealed class PlayerPlane : Unit
         {
             //string display = "not enough room";
         }
+
+        Debug.Log(_cargo.Last()._GameObject+ " " + _cargo.Last()._Program + " into cargo");
     }
 
     public override void dropCargo()
     {
+        Debug.Log("dwassup");
         if (_cargo.Count > 0)
         {
-            var key = _cargo.Keys.First();
+            var key = _cargo.First()._GameObject;
 
             var x = _UnitGameObject.transform.position.x;
             var y = 27.0f;
@@ -1760,11 +1784,8 @@ public sealed class PlayerPlane : Unit
 
             UnitController newUnitcontroller = newUnit.GetComponent<UnitController>();
 
-            
-
-            switch (_cargo[_cargo.Keys.First()])
+            switch (_cargo.First()._Program)
             {
-
                 case "Attack Main":
                     newUnitcontroller.curProgram = "Attack Main";
                     newUnitcontroller.curTeam = "Player1";
@@ -1792,13 +1813,14 @@ public sealed class PlayerPlane : Unit
 
             _cargoUsed--;
 
-            _cargo.Remove(_cargo.Keys.First());
+            _cargo.Remove(_cargo.First());
 
         }
     }
 
     public override bool pickupCargo(GameObject Cargo)
     {
+        Debug.Log("pwassup");
         if (UtypeString.ContainsValue(Cargo.tag))
         {
             var ptype = Cargo.GetComponent(_UnitProgram.ToString());

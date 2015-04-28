@@ -68,7 +68,8 @@ public class UnitController : MonoBehaviour {
 	        }
 
 	        if (Input.GetButtonDown("CargoDrop"))
-	        {
+            {
+                Debug.Log("wassupppppppppddd");
 	            ThisUnit.dropCargo();
 	        }
 	    }
