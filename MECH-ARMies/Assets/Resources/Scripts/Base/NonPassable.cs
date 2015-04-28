@@ -27,6 +27,16 @@ public class NonPassable : MonoBehaviour
             }
     }
 
+    void OnTriggerStay(Collider other)
+    {
+        if (other != null)
+            if (other.GetComponentInParent<UnitController>() != null)
+                if (other.GetComponentInParent<UnitController>().unitType.Equals("PlayerPlane"))
+                {
+                    other.GetComponentInParent<UnitController>().ThisUnit._Life += 1;
+                }
+    }
+
     void OnTriggerExit(Collider other)
     {
         if (other != null)
