@@ -11,7 +11,6 @@ public class MenuController : MonoBehaviour
     public bool IsVisible = false;
 
     private GameObject jet;
-    private JetController jetController;
 
     private int unitIndex = 0;
     private int orderIndex = 0;
@@ -37,7 +36,7 @@ public class MenuController : MonoBehaviour
     {
         defaultColor = GUI.color;
         disableColor = new Color(255, 255, 255, 0.5f);
-        _keyCooldown = 0;
+        _keyCooldown = 5;
 
         units = new[]
         {
@@ -194,7 +193,7 @@ public class MenuController : MonoBehaviour
     private void ConstructButton()
     {
         Debug.Log("yoyoyo");
-        ConstructUnit(unitText[unitIndex], orderText[orderIndex]);        
+        ConstructUnit(unitText[unitIndex], orderText[orderIndex]);
     }
 
     private void SetSelected(int index)

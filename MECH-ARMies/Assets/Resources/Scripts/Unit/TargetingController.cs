@@ -3,22 +3,27 @@ using System.Collections;
 
 public class TargetingController : MonoBehaviour {
 
-    private UnitController unitCont;
-
+    
 	// Use this for initialization
 	void Start () {
-        unitCont = gameObject.GetComponentInParent<UnitController>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+	    if (GetComponentInParent<UnitController>() && GetComponentInParent<UnitController>().ThisUnit._CurTarget && (
+	        Vector3.Distance(GetComponentInParent<UnitController>().ThisUnit._CurTarget.transform.position,
+                GetComponentInParent<UnitController>().transform.position) > GetComponentInParent<UnitController>().ThisUnit._GuardRange || GetComponentInParent<UnitController>().ThisUnit._CurTarget.GetComponent<UnitController>().ThisUnit._IsDead || !GetComponentInParent<UnitController>().ThisUnit._CurTarget.GetComponent<UnitController>().ThisUnit._IsShootable))
+	    {
+	        GetComponentInParent<UnitController>().possibleTarget = null;
+	        GetComponentInParent<UnitController>().ThisUnit._CurTarget = null;
+	    }
 
         //UnityEngine.Debug.Log(string.Format("Targeting Triggered {0}", _UnitGameObject.transform.position));
-        if (unitCont.possibleTarget != null && unitCont.possibleTarget.GetComponent<UnitController>() != null && unitCont.ThisUnit._CurTarget == null)
+        if (GetComponentInParent<UnitController>().possibleTarget != null && GetComponentInParent<UnitController>().possibleTarget.GetComponent<UnitController>() != null && GetComponentInParent<UnitController>().ThisUnit._CurTarget == null)
         {
-            if (unitCont.possibleTarget.GetComponent<UnitController>().ThisUnit._CurTeam != unitCont.ThisUnit._CurTeam && unitCont.possibleTarget.GetComponent<UnitController>().ThisUnit._IsShootable && !unitCont.possibleTarget.GetComponent<UnitController>().ThisUnit._IsDead)
+            if (GetComponentInParent<UnitController>().possibleTarget.GetComponent<UnitController>().ThisUnit._CurTeam != GetComponentInParent<UnitController>().ThisUnit._CurTeam && GetComponentInParent<UnitController>().possibleTarget.GetComponent<UnitController>().ThisUnit._IsShootable && !GetComponentInParent<UnitController>().possibleTarget.GetComponent<UnitController>().ThisUnit._IsDead)
             {
-                unitCont.ThisUnit._CurTarget = unitCont.possibleTarget;
+                GetComponentInParent<UnitController>().ThisUnit._CurTarget = GetComponentInParent<UnitController>().possibleTarget;
             }
         }
 	}

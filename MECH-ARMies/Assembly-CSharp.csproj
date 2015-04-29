@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_6_1;UNITY_4_6;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_6_4;UNITY_4_6;UNITY_WEBPLAYER;WEBPLUG;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_IL2CPP;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_4_6_FEATURES;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;UNITY5_SCRIPTING_IN_UNITY4;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -46,7 +46,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CargoUI.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\Sample Supporting Emitters\DetonatorSprayHelper.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\System\Detonator.cs" />
      <Compile Include="Assets\Models\Detonator Explosion Framework\System\DetonatorBurstEmitter.cs" />
@@ -87,10 +86,13 @@
      <Compile Include="Assets\Resources\Scripts\Base\Sphere2.cs" />
      <Compile Include="Assets\Resources\Scripts\Base\Sphere3.cs" />
      <Compile Include="Assets\Resources\Scripts\Base\Sphere4.cs" />
+     <Compile Include="Assets\Resources\Scripts\Game\Cargo.cs" />
+     <Compile Include="Assets\Resources\Scripts\Game\CargoUI.cs" />
      <Compile Include="Assets\Resources\Scripts\Game\GameController.cs" />
      <Compile Include="Assets\Resources\Scripts\Game\GlobalVariables.cs" />
      <Compile Include="Assets\Resources\Scripts\Game\MenuController.cs" />
      <Compile Include="Assets\Resources\Scripts\Player\CameraController.cs" />
+     <Compile Include="Assets\Resources\Scripts\Player\MouseLook.cs" />
      <Compile Include="Assets\Resources\Scripts\Unit\AimController.cs" />
      <Compile Include="Assets\Resources\Scripts\Unit\AimPan.cs" />
      <Compile Include="Assets\Resources\Scripts\Unit\AimTilt.cs" />
@@ -106,34 +108,17 @@
      <Compile Include="Assets\Resources\Scripts\Unit\TargetingController.cs" />
      <Compile Include="Assets\Resources\Scripts\Unit\TurretRotation.cs" />
      <Compile Include="Assets\Resources\Scripts\Unit\UnitController.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\AttachRigidbody.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\DestroyByCalcTime.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\DestroyByContact.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\DestroyByTime.cs" />
      <Compile Include="Assets\Resources\Scripts\Unused\InfantryRotation.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\JetController.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\MainBaseAttributes.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\MainBaseHealth.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\MechController.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\MouseLook.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\ObjectAttributes.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\PlayerAttributes.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\RemoveShots.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\Respwan.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\Shooting.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\SmallBaseAttributes.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\StopAndShootCollider.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\UnitMovement.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\enemyAIscript.cs" />
-     <Compile Include="Assets\Resources\Scripts\Unused\rig.cs" />
      <Compile Include="Assets\_Scenes\MainMenu\MainMenu.cs" />
+     <Compile Include="Assets\_Scenes\MainMenu\YouLose.cs" />
+     <Compile Include="Assets\_Scenes\MainMenu\YouWin.cs" />
      <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info (1).txt" />
      <None Include="Assets\Models\Military_Rifle_01_Free_v2\Docs\Military_Rifle_Free_Unity_Info.txt" />
      <None Include="Assets\Models\Turret\Shaders\AlphaTest_Complete.shader" />
      <None Include="Assets\Resources\Map\Terrain\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Resources\Models\Cartoon Soldier\Readme.txt" />
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.4/UnityEngine.UI.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

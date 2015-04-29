@@ -61,7 +61,7 @@ public static class BaseStaticValues
     // Max Player values for initializing
     public static class Player
     {
-        public static readonly int MaxLife = 100;
+        public static readonly int MaxLife = 600;
         public static readonly int MaxGuns = 50;
         public static readonly float MaxEnergy = 100;
         public static readonly int GunDamage = 20;
@@ -69,7 +69,7 @@ public static class BaseStaticValues
         public static readonly float GunRange = 35f;
         public static readonly float TransformRate = 1f;
         public static readonly float PickUpDropOffRate = .25f;
-        public static readonly float Speed = 60;
+        public static readonly float Speed = 90;
         public static readonly WeaponsType Weapons = WeaponsType.Guns;
         public static readonly int MaxCargoCapacity = 4;
     }
@@ -107,12 +107,12 @@ public static class BaseStaticValues
     // Infantry Base Attributes
     public class Infantry : Object
     {
-        public const int MaxLife = 100;
+        public const int MaxLife = 150;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
         
-        public static readonly float LineOfSight = 30;
-        public static readonly float GunRange = 20;
+        public static readonly float LineOfSight = 40;
+        public static readonly float GunRange = 30;
         public static readonly int GunDamage = 10;
         public static readonly float GunFireRate = 0.2f;
         public static readonly int CargoSpace = 1;
@@ -137,9 +137,9 @@ public static class BaseStaticValues
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
 
-		public static readonly float LineOfSight = 40;
-		public static readonly float GunRange = 30;
-		public static readonly int GunDamage = 20;
+		public static readonly float LineOfSight = 45;
+		public static readonly float GunRange = 35;
+		public static readonly int GunDamage = 15;
 		public static readonly float GunFireRate = 0.2f;
         public static readonly int CargoSpace = 2;
 		public static readonly int Cost = 40;
@@ -201,7 +201,7 @@ public static class BaseStaticValues
     // Turret Base Attributes
     public class Turret : Object
 	{
-        public const int MaxLife = 50;
+        public const int MaxLife = 500;
         public const float MaxEnergy = 200;
         public const int MaxGuns = 50;
 	    public const int MaxMissiles = 50;
@@ -228,7 +228,7 @@ public static class BaseStaticValues
     // MainBase Base Attributes
 	public static class MainBase
 	{
-		public const int MaxLife = 1000;
+		public const int MaxLife = 2000;
 	}
 	
     // Shot Base Attributes
@@ -294,7 +294,7 @@ public abstract class Unit : Object
     public abstract GameObject _CurTarget { get; set; }
     public abstract GameObject _CurDestination { get; set; }
     public abstract AreaLightColor[] _AreaLightsArray { get; set; }
-    public abstract MiniMapBeacon _MiniMapBeacon { get; set; }
+    public abstract MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public abstract Transform _TargetedTransformOffset { get; set; }
     public abstract Transform _TargetTransform { get; set; }
     public abstract GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -313,7 +313,7 @@ public abstract class Unit : Object
         //UnityEngine.Debug.Log(string.Format("TakeDamage Triggered {0}", _UnitGameObject.transform.position));
         if (_IsShootable && !_IsDead)
         {
-            _Life = _Life - damageAmount;
+            _Life -= damageAmount;
             //Destroy(shotGameObject);
             if (_Life <= 0)
             {
@@ -544,13 +544,19 @@ public abstract class Unit : Object
 
             if (_UnitType == UType.PlayerPlane || _UnitType == UType.PlayerMech)
             {
+                _IsDead = false;
                 _UnitGameObject.SetActive(false);
+                
                 //! Have an Explosion Have camera Quickly Pan back to base (Or just have ship quickly Move back, because camera will follow)
+                Respawn();
             }
             else
             {
                 //! Have and Explosion and or a slow transition through the terrain
-                Destroy(_UnitGameObject);
+                if (_UnitType != UType.MainBase)
+                {
+                    Destroy(_UnitGameObject);
+                }
             }
         }
     }
@@ -558,30 +564,54 @@ public abstract class Unit : Object
     // If unit dies will re-spawn at base
     public void Respawn()
     {
-        Transform tempRespawnTransform = GameObject.FindGameObjectWithTag(_CurTeam + "PlayerSpawnPoint").transform;
-        if (_UnitType == UType.PlayerPlane)
+        Transform tempRespawnTransform = null;
+        if (GameObject.FindGameObjectWithTag(_CurTeam + "SpawnPoint"))
         {
-            _UnitGameObject.transform.position = tempRespawnTransform.position;
-            _UnitGameObject.transform.rotation = tempRespawnTransform.rotation;
-            //! Put Delay and something for re-spawn effect
-            _UnitGameObject.SetActive(true);
-            // Re-initialize PlayerValues
-            _UnitGameObject.GetComponent<UnitController>().ThisUnit = new PlayerPlane(_CurTeam, _UnitGameObject);
-        }
-        else
-        {
-            //! Put Delay and something for re-spawn effect
-            //! Create new PlayerPlane Unit at tempRespawnTransform
-            Destroy(_UnitGameObject);
+            tempRespawnTransform = GameObject.FindGameObjectWithTag(_CurTeam + "SpawnPoint").transform;
+
+            if (_UnitType == UType.PlayerPlane)
+            {
+                _Life = BaseStaticValues.Player.MaxLife;
+                _Energy = BaseStaticValues.Player.MaxEnergy;
+                _Guns = BaseStaticValues.Player.MaxGuns;
+                if (GameObject.FindGameObjectWithTag(_CurTeam + "SpawnPoint") && tempRespawnTransform)
+                {
+                    _UnitGameObject.transform.position = tempRespawnTransform.position;
+                    _UnitGameObject.transform.rotation = tempRespawnTransform.rotation;
+                }
+                // Put Delay and something for re-spawn effect
+                _UnitGameObject.SetActive(true);
+                // Re-initialize PlayerValues
+                _UnitGameObject.GetComponent<UnitController>().ThisUnit = new PlayerPlane(_CurTeam, _UnitGameObject);
+            }
+            else
+            {
+                // Put Delay and something for re-spawn effect
+                // Create new PlayerPlane Unit at tempRespawnTransform
+                Destroy(_UnitGameObject);
+                _Life = BaseStaticValues.Player.MaxLife;
+                _Energy = BaseStaticValues.Player.MaxEnergy;
+                _Guns = BaseStaticValues.Player.MaxGuns;
+                GameObject jetGameObject = (GameObject)Resources.Load("LatestPrefabVersions/Jet");
+                jetGameObject.GetComponent<UnitController>().curTeam = "Player1";
+                jetGameObject.GetComponent<UnitController>().unitType = "PlayerPlane";
+                jetGameObject.GetComponent<UnitController>().curProgram = "PlayerPlane";
+                if (GameObject.FindGameObjectWithTag(_CurTeam + "SpawnPoint") && tempRespawnTransform)
+                {
+                    Instantiate(jetGameObject, tempRespawnTransform.position, tempRespawnTransform.rotation);
+                }
+            }
+            _CanMove = true;
+            _CanShoot = true;
+            _IsShootable = true;
         }
     }
 
     public virtual void SwitchPlayer(GameObject gameObject){}
-    public virtual void dropCargo() { Debug.Log("wwwwwwwwwassuppppppppp"); }
-    public virtual void createCargo(string unit, string program) { Debug.Log("wasssssssssssuppppppppp"); }
+    public virtual void dropCargo(){}
+    public virtual void createCargo(string unit, string program) {}
     public virtual bool pickupCargo(GameObject Cargo)
     {
-        Debug.Log("wassuppppppppp");
         return false;
     }
     // Might need to implement this in the UnitController instead of the unit Class
@@ -767,7 +797,10 @@ public abstract class Unit : Object
             {
                 UnityEngine.Debug.Log("Building Captured for Player1");
                 _CurTeam = "Player1";
-                _MiniMapBeacon.ColorCaptured("Player1");
+                foreach (var mapBeacon in _MiniMapBeacon)
+                {
+                    mapBeacon.ColorCaptured("Player1");
+                }
                 foreach (var theLights in _AreaLightsArray)
                 {
                     theLights.ColorCaptured("Player1");
@@ -779,7 +812,10 @@ public abstract class Unit : Object
             {
                 UnityEngine.Debug.Log("Building Captured for Player2");
                 _CurTeam = "Player2";
-                _MiniMapBeacon.ColorCaptured("Player2");
+                foreach (var mapBeacon in _MiniMapBeacon)
+                {
+                    mapBeacon.ColorCaptured("Player2");
+                }
                 foreach (var theLights in _AreaLightsArray)
                 {
                     theLights.ColorCaptured("Player2");
@@ -829,6 +865,24 @@ public sealed class Infantry : Unit
         _Energy = energy;
         _Guns = guns;
         _UnitGameObject = unitGameObject;
+        if (_UnitGameObject)
+        {
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
+        }
+        if (_CurTeam == "Player1")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
+        }
+        if (_CurTeam == "Player2")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -857,7 +911,7 @@ public sealed class Infantry : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }
@@ -908,7 +962,24 @@ public sealed class Jeep : Unit
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-
+        if (_UnitGameObject)
+        {
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
+        }
+        if (_CurTeam == "Player1")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
+        }
+        if (_CurTeam == "Player2")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -937,7 +1008,7 @@ public sealed class Jeep : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }
@@ -990,11 +1061,24 @@ public sealed class Tank : Unit
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-        if (unitGameObject != null)
+        if (_UnitGameObject)
         {
-            _UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = _GunRange/2;
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
         }
-
+        if (_CurTeam == "Player1")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
+        }
+        if (_CurTeam == "Player2")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -1023,7 +1107,7 @@ public sealed class Tank : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }
@@ -1074,7 +1158,24 @@ public sealed class SAM : Unit
         _CanMove = true;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-
+        if (_UnitGameObject)
+        {
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
+        }
+        if (_CurTeam == "Player1")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
+        }
+        if (_CurTeam == "Player2")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -1103,7 +1204,7 @@ public sealed class SAM : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -1157,7 +1258,24 @@ public sealed class Turret : Unit
         _CanMove = false;
         _IsDead = false;
         _UnitGameObject = unitGameObject;
-
+        if (_UnitGameObject)
+        {
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
+        }
+        if (_CurTeam == "Player1")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
+        }
+        if (_CurTeam == "Player2")
+        {
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
+        }
     }
 
     public override bool _IsShootable { get; set; }
@@ -1186,7 +1304,7 @@ public sealed class Turret : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }
@@ -1232,7 +1350,7 @@ public sealed class SmallBase : Unit
         if (_UnitGameObject)
         {
             _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
-            _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
         }
         if (_CurTeam == "Player1")
         {
@@ -1245,7 +1363,10 @@ public sealed class SmallBase : Unit
             {
                 theLights.ColorCaptured("Player1");
             }
-            _MiniMapBeacon.ColorCaptured("Player1");
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            };
         }
 
         if (_CurTeam == "Player2")
@@ -1259,7 +1380,10 @@ public sealed class SmallBase : Unit
             {
                 theLights.ColorCaptured("Player2");
             }
-            _MiniMapBeacon.ColorCaptured("Player2");
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
         }
 
     }
@@ -1290,7 +1414,7 @@ public sealed class SmallBase : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -1339,7 +1463,7 @@ public sealed class MainBase : Unit
         if (_UnitGameObject)
         {
             _AreaLightsArray = _UnitGameObject.GetComponentsInChildren<AreaLightColor>();
-            _MiniMapBeacon = _UnitGameObject.GetComponentInChildren<MiniMapBeacon>();
+            _MiniMapBeacon = _UnitGameObject.GetComponentsInChildren<MiniMapBeacon>();
         }
         if (_CurTeam == "Player1")
         {
@@ -1347,7 +1471,10 @@ public sealed class MainBase : Unit
             {
                 theLights.ColorCaptured("Player1");
             }
-            _MiniMapBeacon.ColorCaptured("Player1");
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player1");
+            }
         }
 
         if (_CurTeam == "Player2")
@@ -1356,7 +1483,10 @@ public sealed class MainBase : Unit
             {
                 theLights.ColorCaptured("Player2");
             }
-            _MiniMapBeacon.ColorCaptured("Player2");
+            foreach (var mapBeacon in _MiniMapBeacon)
+            {
+                mapBeacon.ColorCaptured("Player2");
+            }
         }
     }
 
@@ -1394,7 +1524,7 @@ public sealed class MainBase : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -1470,7 +1600,7 @@ public sealed class Shot : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -1541,7 +1671,7 @@ public sealed class Missile : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get; set; }
@@ -1589,10 +1719,10 @@ public sealed class PlayerPlane : Unit
         _CargoCapacity = 1;
         _startHeight = 35;
         _cargoUsed = 0;
-        _mech = (GameObject)Resources.Load("Prefabs/Mech");
-        _humvee = (GameObject)Resources.Load("Prefabs/Humvee");
-        _infantry = (GameObject)Resources.Load("Prefabs/Infantry");
-        _turret = (GameObject)Resources.Load("Prefabs/Turret");
+        _mech = (GameObject)Resources.Load("LatestPrefabVersions/Mech");
+        _humvee = (GameObject)Resources.Load("LatestPrefabVersions/Jeep");
+        _infantry = (GameObject)Resources.Load("LatestPrefabVersions/Infantry");
+        _turret = (GameObject)Resources.Load("LatestPrefabVersions/Turret");
         _menuController = GameObject.FindWithTag("MenuController").GetComponent<MenuController>();
         _CurTeam = "Player1";
     }
@@ -1632,7 +1762,6 @@ public sealed class PlayerPlane : Unit
     private GameObject _turret;
     private MenuController _menuController;
 
-
     public List<UnitProgram> _cargo = new List<UnitProgram>();
     //private List<GameObject> _cargo = new List<GameObject>();
     private float _nextFire;
@@ -1648,51 +1777,6 @@ public sealed class PlayerPlane : Unit
         {UType.Jeep, "Humvee"},
         {UType.Turret, "Turret"},
     };
-    /*
-    public override GameObject Shoot(GameObject curTargetGameObject, string strCollider)
-    {
-
-        _shotingOrigins = curTargetGameObject.GetComponentsInChildren<GunBarrelEnd>();
-
-        _shootingOrigin1 = _shotingOrigins[0].transform;
-        _shootingOrigin2 = _shotingOrigins[1].transform;
-
-        _nextFire = Time.time + _fireRate;
-
-        if (_shootingOrigin1 != null && _nextFire <= Time.time)
-        {
-            _nextFire = Time.time + _fireRate;
-
-            GameObject theshot1 = Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation) as GameObject;
-            GameObject theshot2 = Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation) as GameObject;
-           
-            _UnitGameObject.GetComponentInChildren<GunBarrelEnd>().shotFiredAudioSource.Play();
-
-            if (theshot1 != null && theshot1.GetComponent<UnitController>() != null)
-            {
-                theshot1.GetComponent<UnitController>().curTeam = _CurTeam;
-                theshot1.GetComponent<UnitController>().dealDamage = _GunAttackDamage;
-                theshot1.GetComponent<UnitController>().gunRange = _GunRange;
-            }
-
-            if (theshot2 != null && theshot2.GetComponent<UnitController>() != null)
-            {
-                theshot2.GetComponent<UnitController>().curTeam = _CurTeam;
-                theshot2.GetComponent<UnitController>().dealDamage = _GunAttackDamage;
-                theshot2.GetComponent<UnitController>().gunRange = _GunRange;
-            }
-        }
-
-
-        //_playerAudio.clip = _shotsFired;
-        //_playerAudio.volume = _shootSoundVolume;
-        //_playerAudio.Play();
-        Instantiate(_shot, _shootingOrigin1.position, _shootingOrigin1.rotation);
-        Instantiate(_shot, _shootingOrigin2.position, _shootingOrigin2.rotation);
-
-        return base.Shoot(curTargetGameObject, strCollider);
-    }
-    */
 
     public override void SwitchPlayer(GameObject gameObject)
     {
@@ -1700,40 +1784,8 @@ public sealed class PlayerPlane : Unit
         Instantiate(_mech, location, _UnitGameObject.transform.rotation);
         DestroyImmediate(_UnitGameObject);
     }
-    /*
-    public override GameObject Move(GameObject curClosestGameObject, Transform curUnitTransform)
-    {
-        
-        var x = Input.GetAxis("Horizontal");
-        var z = Input.GetAxis("Vertical");
-        if (_menuController.IsVisible)
-        {
-            x = 0;
-            z = 0;
-        }
-        var movement = new Vector3(x, 0.0f, z);
-        if (movement.magnitude <= 0)
-        {
-            //this executes if the player is not pressing any buttons
-            if (_UnitGameObject.rigidbody.velocity.magnitude > 0.1f)
-            {
-                //this slows down the jet slowly
-                _UnitGameObject.rigidbody.velocity *= 0.1f;
-            }
-            else _UnitGameObject.rigidbody.velocity *= 0;
-        }
-        else
-        {
-            _UnitGameObject.rigidbody.velocity = movement * _speed;
-            var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
-            var newRotation = Quaternion.Lerp(_UnitGameObject.rigidbody.rotation, targetRotation, 15f * Time.deltaTime);
-            _UnitGameObject.rigidbody.rotation = newRotation;
-        }
-        return base.Move(_UnitGameObject, _UnitGameObject.transform);
-    }
-    */
-
-    public override void createCargo(string unit, string program)
+    
+     public override void createCargo(string unit, string program)
     {
         if (_cargoUsed < 3)
         {
@@ -1760,79 +1812,78 @@ public sealed class PlayerPlane : Unit
             //string display = "not enough room";
         }
 
-        Debug.Log(_cargo.Last()._GameObject+ " " + _cargo.Last()._Program + " into cargo");
+        Debug.Log(_cargo.Last()._GameObject + " " + _cargo.Last()._Program + " into cargo");
     }
 
-    public override void dropCargo()
-    {
-        Debug.Log("dwassup");
-        if (_cargo.Count > 0)
-        {
-            var key = _cargo.First()._GameObject;
+     public override void dropCargo()
+     {
+         Debug.Log("dwassup");
+         if (_cargo.Count > 0)
+         {
+             var key = _cargo.First()._GameObject;
 
-            var x = _UnitGameObject.transform.position.x;
-            var y = 27.0f;
-            var z = _UnitGameObject.transform.position.z;
+             var x = _UnitGameObject.transform.position.x;
+             var y = 27.0f;
+             var z = _UnitGameObject.transform.position.z;
 
-            var instantiation = new Vector3(x, y, z);
-            //var movement = new Vector3(0, 90, 0);
-            var rot = new Quaternion(0, 0, 0, 0);
-            //var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
+             var instantiation = new Vector3(x, y, z);
+             //var movement = new Vector3(0, 90, 0);
+             var rot = new Quaternion(0, 0, 0, 0);
+             //var targetRotation = Quaternion.LookRotation(movement, Vector3.up);
 
-            GameObject newUnit = (GameObject) Instantiate(key, instantiation, rot);
-            // newUnit = (GameObject) Instantiate(_cargo.Keys.First(), instantiation, rot);
 
-            UnitController newUnitcontroller = newUnit.GetComponent<UnitController>();
+             key.GetComponent<UnitController>().curTeam = _CurTeam;
+             
 
-            switch (_cargo.First()._Program)
-            {
-                case "Attack Main":
-                    newUnitcontroller.curProgram = "Attack Main";
-                    newUnitcontroller.curTeam = "Player1";
-                    break;
-                case "Guard":
-                    newUnitcontroller.curProgram = "Guard";
-                    newUnitcontroller.curTeam = "Player1";
-                    break;
-                case "Stand Ground":
-                    newUnitcontroller.curProgram = "Stand Ground";
-                    newUnitcontroller.curTeam = "Player1";
-                    break;
-                case "Attack Nearest Object":
-                    newUnitcontroller.curProgram= "Nearest Base";
-                    newUnitcontroller.curTeam = "Player1";
-                    break;
-                default:
-                    newUnitcontroller.curProgram = "Ground";
-                    newUnitcontroller.curTeam = "Player1";
-                    break;
+             
+             // newUnit = (GameObject) Instantiate(_cargo.Keys.First(), instantiation, rot);
 
-            }
-            
-           
+             
 
-            _cargoUsed--;
+             switch (_cargo.First()._Program)
+             {
+                 case "Attack Main":
+                     key.GetComponent<UnitController>().curProgram = "Attack Main";
+                     break;
+                 case "Guard":
+                     key.GetComponent<UnitController>().curProgram = "Guard";
+                     break;
+                 case "Stand Ground":
+                     key.GetComponent<UnitController>().curProgram = "Stand Ground";
+                     break;
+                 case "Attack Nearest Object":
+                     key.GetComponent<UnitController>().curProgram = "Nearest Base";
+                     break;
+                 default:
+                     key.GetComponent<UnitController>().curProgram = "Stand Ground";
+                     break;
 
-            _cargo.Remove(_cargo.First());
+             }
 
-        }
-    }
+             GameObject newUnit = (GameObject)Instantiate(key, instantiation, rot);
 
-    public override bool pickupCargo(GameObject Cargo)
-    {
-        Debug.Log("pwassup");
-        if (UtypeString.ContainsValue(Cargo.tag))
-        {
-            var ptype = Cargo.GetComponent(_UnitProgram.ToString());
-            createCargo(Cargo.tag, ptype.ToString());
-            Destroy(Cargo);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+             _cargoUsed--;
+
+             _cargo.Remove(_cargo.First());
+
+         }
+     }
+
+     public override bool pickupCargo(GameObject Cargo)
+     {
+         Debug.Log("pwassup");
+         if (UtypeString.ContainsValue(Cargo.tag))
+         {
+             var ptype = Cargo.GetComponent(_UnitProgram.ToString());
+             createCargo(Cargo.tag, ptype.ToString());
+             Destroy(Cargo);
+             return true;
+         }
+         else
+         {
+             return false;
+         }
+     }
 
     public override bool _IsShootable { get; set; }
     public override bool _CanShoot { get; set; }
@@ -1845,13 +1896,13 @@ public sealed class PlayerPlane : Unit
             if (_CurTeam == "Player1")
             {
                 BaseStaticValues.Player1.Life = value;
-                if (GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>() != null)
+                if (GameObject.FindGameObjectWithTag("Player1Health") && GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>() != null)
                 {
                     GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>().value = value;
                 }
             } 
             BaseStaticValues.Player2.Life = value;
-            if (GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Health") && GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>() != null)
             {
                 GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>().value = value;
             }
@@ -1865,13 +1916,13 @@ public sealed class PlayerPlane : Unit
             if (_CurTeam == "Player1")
             {
                 BaseStaticValues.Player1.Energy = value;
-                if (GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>() != null)
+                if (GameObject.FindGameObjectWithTag("Player1Energy") && GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>() != null)
                 {
                     GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>().value = value;
                 }
             } 
             BaseStaticValues.Player2.Energy = value; 
-            if (GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Energy") && GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>() != null)
             {
                 GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>().value = value;
             }
@@ -1885,13 +1936,13 @@ public sealed class PlayerPlane : Unit
             if (_CurTeam == "Player1")
             {
                 BaseStaticValues.Player1.Guns = value;
-                if (GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>() != null)
+                if (GameObject.FindGameObjectWithTag("Player1Guns") && GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>() != null)
                 {
                     GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>().value = value;
                 }
             } 
             BaseStaticValues.Player2.Guns = value; 
-            if (GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Guns") && GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>() != null)
             {
                 GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>().value = value;
             }
@@ -1917,7 +1968,7 @@ public sealed class PlayerPlane : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }
@@ -1972,16 +2023,17 @@ public sealed class PlayerMech : Unit
         {
             if (_CurTeam == "Player1")
             {
-                BaseStaticValues.Player1.Life = value;
-                if (GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>() != null)
+                Debug.Log(string.Format("Damage Value: {0}", value));
+                BaseStaticValues.Player1.Life += value;
+                if (GameObject.FindGameObjectWithTag("Player1Health") && GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>() != null)
                 {
-                    GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>().value = value;
+                    GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>().value += value;
                 }
             }
             BaseStaticValues.Player2.Life = value;
-            if (GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Health") && GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>() != null)
             {
-                GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>().value = value;
+                GameObject.FindGameObjectWithTag("Player2Health").GetComponent<Slider>().value += value;
             }
         }
     }
@@ -1992,16 +2044,16 @@ public sealed class PlayerMech : Unit
         {
             if (_CurTeam == "Player1")
             {
-                BaseStaticValues.Player1.Energy = value;
-                if (GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>() != null)
+                BaseStaticValues.Player1.Energy += value;
+                if (GameObject.FindGameObjectWithTag("Player1Energy") && GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>() != null)
                 {
-                    GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>().value = value;
+                    GameObject.FindGameObjectWithTag("Player1Energy").GetComponent<Slider>().value += value;
                 }
             }
             BaseStaticValues.Player2.Energy = value;
-            if (GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Energy") && GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>() != null)
             {
-                GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>().value = value;
+                GameObject.FindGameObjectWithTag("Player2Energy").GetComponent<Slider>().value += value;
             }
         }
     }
@@ -2013,13 +2065,13 @@ public sealed class PlayerMech : Unit
             if (_CurTeam == "Player1")
             {
                 BaseStaticValues.Player1.Guns = value;
-                if (GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>() != null)
+                if (GameObject.FindGameObjectWithTag("Player1Guns") && GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>() != null)
                 {
                     GameObject.FindGameObjectWithTag("Player1Guns").GetComponent<Slider>().value = value;
                 }
             }
             BaseStaticValues.Player2.Guns = value;
-            if (GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>() != null)
+            if (GameObject.FindGameObjectWithTag("Player2Guns") && GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>() != null)
             {
                 GameObject.FindGameObjectWithTag("Player2Guns").GetComponent<Slider>().value = value;
             }
@@ -2045,7 +2097,7 @@ public sealed class PlayerMech : Unit
     public override GameObject _CurTarget { get; set; }
     public override GameObject _CurDestination { get; set; }
     public override AreaLightColor[] _AreaLightsArray { get; set; }
-    public override MiniMapBeacon _MiniMapBeacon { get; set; }
+    public override MiniMapBeacon[] _MiniMapBeacon { get; set; }
     public override Transform _TargetedTransformOffset { get; set; }
     public override Transform _TargetTransform { get; set; }
     public override GunBarrelEnd[] _ShotOrigins { get { return _UnitGameObject.GetComponentsInChildren<GunBarrelEnd>(); } set { } }

@@ -1,7 +1,7 @@
 //This script controls how the soldier will move.
 @script RequireComponent(CharacterController);
 
-var jet : GameObject;
+var jet : GameObject = Resources.Load("LatestPrefabVersions/Jet");
 
 var forwardSpeedMultiplier : float = 3.0;
 var strafeSpeedMultiplier : float = 2.0;
@@ -143,6 +143,10 @@ function Update () {
 
 	if (Input.GetButtonDown("Change") && Time.time > nextTransform)
 	{
+	    //GameObject jetGameObject = (GameObject)Resources.Load("LatestPrefabVersions/Jet");
+	    //jetGameObject.GetComponent<UnitController>().curTeam = "Player1";
+	    //jetGameObject.GetComponent<UnitController>().unitType = "PlayerPlane";
+	    //jetGameObject.GetComponent<UnitController>().curProgram = "PlayerPlane";
 
 	    var location : Vector3 = new Vector3(transform.position.x, 34.5f, transform.position.z);
 	    Instantiate(jet, location, transform.rotation);

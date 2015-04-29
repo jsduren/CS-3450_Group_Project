@@ -3,42 +3,41 @@ using System.Collections;
 
 public class AimController : MonoBehaviour {
 
-    private UnitController unitCont;
+    
 
 	// Use this for initialization
 	void Start () {
-        unitCont = gameObject.GetComponentInParent<UnitController>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (unitCont.ThisUnit._CurTarget != null)
+        if (GetComponentInParent<UnitController>() && GetComponentInParent<UnitController>().ThisUnit._CurTarget && GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>() && GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<GunRotation>() && GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<AimTilt>() && GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<AimPan>())
         {
-            Vector3 targetPosition2d = new Vector3(unitCont.ThisUnit._CurTarget.transform.position.x, unitCont.ThisUnit._CurTarget.transform.position.y + 1, unitCont.ThisUnit._CurTarget.transform.position.z);
-            Transform aim_pan = unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<AimPan>().transform;
+            Vector3 targetPosition2d = new Vector3(GetComponentInParent<UnitController>().ThisUnit._CurTarget.transform.position.x, GetComponentInParent<UnitController>().ThisUnit._CurTarget.transform.position.y + 1, GetComponentInParent<UnitController>().ThisUnit._CurTarget.transform.position.z);
+            Transform aim_pan = GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<AimPan>().transform;
             aim_pan.LookAt(targetPosition2d);
             aim_pan.eulerAngles = new Vector3(0, aim_pan.eulerAngles.y, 0);
-            if (unitCont.ThisUnit._UnitType == UType.Jeep)
-            {
+            //if (GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Jeep)
+            //{
 
-                Transform aim_tilt = unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<AimTilt>().transform;
+                Transform aim_tilt = GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<AimTilt>().transform;
                 aim_tilt.LookAt(targetPosition2d);
                 //aim_tilt.eulerAngles = new Vector3(aim_tilt.eulerAngles.x, 0, 0);
 
-                unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
+                GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
 
                 //_UnitGameObject.GetComponentInChildren<GunRotation>().transform.LookAt(targetPosition2d);
-                unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation = Quaternion.RotateTowards(unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation, aim_tilt.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
-            }
-            else
-            {
+                GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation = Quaternion.RotateTowards(GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<GunRotation>().transform.rotation, aim_tilt.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping);
+            //}
+            //else
+            //{
 
                 //Transform aim_tilt = _UnitGameObject.GetComponentInChildren<AimTilt>().transform;
                 //aim_tilt.LookAt(targetPosition2d);
                 //aim_tilt.eulerAngles = new Vector3(aim_tilt.eulerAngles.x, 0, 0);
                 //_UnitGameObject.GetComponentInChildren<TurretRotation>().transform.LookAt(targetPosition2d);
-                unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(unitCont.ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping * 2);
-            }
+                //GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation = Quaternion.RotateTowards(GetComponentInParent<UnitController>().ThisUnit._UnitGameObject.GetComponentInChildren<TurretRotation>().transform.rotation, aim_pan.rotation, Time.deltaTime * BaseStaticValues.Unit.RotationDamping * 2);
+            //}
         }
 	}
 }

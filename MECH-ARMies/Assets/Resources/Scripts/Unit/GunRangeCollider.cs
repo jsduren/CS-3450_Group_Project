@@ -24,24 +24,45 @@ public class GunRangeCollider : MonoBehaviour
         }
 	}
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider otherTarget)
     {
-        if (other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<GunController>() != null && gameObject.GetComponentInParent<UnitController>() != null && other.GetComponentInParent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane && gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTarget == null && other.GetComponentInParent<UnitController>().ThisUnit._IsShootable && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam && (gameObject.GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.Guns || gameObject.GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.GunsAndMissiles))
+
+        if (otherTarget.GetComponentInParent<UnitController>() &&
+            GetComponentInParent<GunController>() &&
+            GetComponentInParent<UnitController>() &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane &&
+            GetComponentInParent<UnitController>().ThisUnit._CurTarget == null &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._IsShootable &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._CurTeam !=
+            GetComponentInParent<UnitController>().ThisUnit._CurTeam &&
+            (GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.Guns ||
+                GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.GunsAndMissiles))
         {
-            gameObject.GetComponentInParent<GunController>().Shoot();
+            GetComponentInParent<GunController>().Shoot();
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerStay(Collider otherTarget)
     {
-        if (other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<GunController>() != null && gameObject.GetComponentInParent<UnitController>() != null && other.GetComponentInParent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane && gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTarget == null && other.GetComponentInParent<UnitController>().ThisUnit._IsShootable && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam && (gameObject.GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.Guns || gameObject.GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.GunsAndMissiles))
+        
+        if (otherTarget.GetComponentInParent<UnitController>() &&
+            GetComponentInParent<GunController>() &&
+            GetComponentInParent<UnitController>() &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._UnitType != UType.PlayerPlane &&
+            GetComponentInParent<UnitController>().ThisUnit._CurTarget == null &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._IsShootable &&
+            otherTarget.GetComponentInParent<UnitController>().ThisUnit._CurTeam !=
+            GetComponentInParent<UnitController>().ThisUnit._CurTeam &&
+            (GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.Guns ||
+                GetComponentInParent<UnitController>().ThisUnit._Weapons == WeaponsType.GunsAndMissiles))
         {
-            gameObject.GetComponentInParent<GunController>().Shoot();
+            GetComponentInParent<GunController>().Shoot();
         }
     }
 
     void OnTriggerExit(Collider other)
     {
+        
         
     }
 }

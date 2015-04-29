@@ -4,7 +4,9 @@ using System.Linq;
 
 public class MoveController : MonoBehaviour
 {
-
+    private float shotDeleteTime = 0;
+    private float shotTimeOffset = .5f;
+    public GameObject moveClosestBase;
     
 	
     // Use this for initialization
@@ -68,14 +70,15 @@ public class MoveController : MonoBehaviour
                     {
                         GameObject tempClosestBase = null;
                         // Using a LINQ list to find the shortest distance
-                        foreach (var smallBase in BaseStaticValues.SmallBaseArray.Where(smallBase => smallBase.GetComponent<UnitController>() != null && gameObject.GetComponent<UnitController>().ThisUnit._CurTeam != null && smallBase.GetComponent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponent<UnitController>().ThisUnit._CurTeam).Where(smallBase => distance >= Vector3.Distance(smallBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position)))
+                        foreach (var smallBase in BaseStaticValues.SmallBaseArray.Where(smallBase => smallBase != null && smallBase.GetComponent<UnitController>() != null && gameObject.GetComponent<UnitController>().ThisUnit._CurTeam != null && smallBase.GetComponent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponent<UnitController>().ThisUnit._CurTeam).Where(smallBase => distance >= Vector3.Distance(smallBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position)))
                         {
+                            
                             distance = Vector3.Distance(smallBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position);
                             tempClosestBase = smallBase;
                             //UnityEngine.Debug.Log(string.Format("Closest Small Base {0}", smallBase));
                         }
                         // Using a LINQ list to find the shortest distance
-                        foreach (var mainBase in BaseStaticValues.MainBaseArray.Where(mainBase => mainBase.GetComponent<UnitController>() != null && gameObject.GetComponent<UnitController>().ThisUnit._CurTeam != null && mainBase.GetComponent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponent<UnitController>().ThisUnit._CurTeam).Where(mainBase => distance >= Vector3.Distance(mainBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position)))
+                        foreach (var mainBase in BaseStaticValues.MainBaseArray.Where(mainBase => mainBase != null && mainBase.GetComponent<UnitController>() != null && gameObject.GetComponent<UnitController>().ThisUnit._CurTeam != null && mainBase.GetComponent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponent<UnitController>().ThisUnit._CurTeam).Where(mainBase => distance >= Vector3.Distance(mainBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position)))
                         {
                             distance = Vector3.Distance(mainBase.transform.position, gameObject.GetComponent<UnitController>().ThisUnit._CurrentTransform.position);
                             tempClosestBase = mainBase;
@@ -87,22 +90,24 @@ public class MoveController : MonoBehaviour
                             //UnityEngine.Debug.Log(string.Format("Closest Base Returned: {0}", tempClosestBase.transform.position));
                         }
 
-                        // Don't think is needed
-                        //gameObject.GetComponent<UnitController>().ThisUnit._CurTarget = tempClosestBase;
+                        
+                        moveClosestBase = tempClosestBase;
+
+                        Debug.Log(string.Format("Closest Base Returned: {0}", moveClosestBase.transform.position));
 
                         if (tempClosestBase != null)
                         {
-                            distance = Vector3.Distance(gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.transform.position, tempClosestBase.transform.position);
-                            if (gameObject.GetComponent<UnitController>().ThisUnit._UnitType == UType.Infantry && tempClosestBase.GetComponent<UnitController>().ThisUnit._UnitType == UType.SmallBase)
+                            distance = Vector3.Distance(gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.transform.position, moveClosestBase.transform.position);
+                            if (gameObject.GetComponent<UnitController>().ThisUnit._UnitType == UType.Infantry && moveClosestBase.GetComponent<UnitController>().ThisUnit._UnitType == UType.SmallBase)
                             {
-                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(new Vector3(tempClosestBase.transform.position.x,
-                                    tempClosestBase.transform.position.y,
-                                    tempClosestBase.transform.position.z));
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(new Vector3(moveClosestBase.transform.position.x,
+                                    moveClosestBase.transform.position.y,
+                                    moveClosestBase.transform.position.z));
                             }
                             else
                             {
                                 gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = gameObject.GetComponent<UnitController>().ThisUnit._GunRange / 2;
-                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(tempClosestBase.transform.position);
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(moveClosestBase.transform.position);
                             }
                         }
                     }
@@ -110,24 +115,44 @@ public class MoveController : MonoBehaviour
                 case ProgramType.AttackMain:
                     //# AttackMain
                     distance = 4000f;
-                    if (gameObject.GetComponent<UnitController>().ThisUnit._CurTeam == "Player1")
+                    if (moveClosestBase && gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>())
                     {
-                        gameObject.GetComponent<UnitController>().ThisUnit._CurTarget = BaseStaticValues.MainBaseArray[2 - 1];
-                        gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
-                        gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<UnitController>().ThisUnit._CurTarget.transform.position);
-                    }
-                    else
-                    {
-                        gameObject.GetComponent<UnitController>().ThisUnit._CurTarget = BaseStaticValues.MainBaseArray[1 - 1];
-                        gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
-                        gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<UnitController>().ThisUnit._CurTarget.transform.position);
+                        if (gameObject.GetComponent<UnitController>().ThisUnit._CurTeam == "Player1")
+                        {
+                            if (BaseStaticValues.MainBaseArray[2 - 1] != null)
+                            {
+                                moveClosestBase = BaseStaticValues.MainBaseArray[2 - 1];
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(moveClosestBase.transform.position);
+                            }
+                        }
+                        else
+                        {
+                            if (BaseStaticValues.MainBaseArray[1 - 1] != null)
+                            {
+                                moveClosestBase = BaseStaticValues.MainBaseArray[1 - 1];
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().stoppingDistance = 2;
+                                gameObject.GetComponent<UnitController>().ThisUnit._UnitGameObject.GetComponent<NavMeshAgent>().SetDestination(moveClosestBase.transform.position);
+                            }
+                        }
                     }
                     break; //# AttackMain
                 case ProgramType.Shot:
                     
-                    if (Vector3.Distance(transform.position, GetComponent<UnitController>().ThisUnit._DropPosition) >= GetComponent<UnitController>().ThisUnit._GunRange)
+                    if (gameObject && Vector3.Distance(transform.position, GetComponent<UnitController>().ThisUnit._DropPosition) >= GetComponent<UnitController>().ThisUnit._GunRange)
                     {
-                        DestroyImmediate(gameObject);
+                        if (gameObject != null)
+                        {
+                            Destroy(gameObject);
+                        }
+                    }
+
+                    if (gameObject && rigidbody.velocity != transform.forward * BaseStaticValues.Shot.Velocity && shotDeleteTime >= Time.time)
+                    {
+                        if (gameObject)
+                        {
+                            Destroy(gameObject);
+                        }
                     }
                     break;
                 case ProgramType.Missile:
@@ -182,4 +207,14 @@ public class MoveController : MonoBehaviour
             }
         }
 	}
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (gameObject && GetComponent<UnitController>() != null && GetComponent<UnitController>().ThisUnit._UnitType == UType.Shot)
+        {
+            shotDeleteTime = Time.time + shotTimeOffset;
+            rigidbody.velocity = transform.forward * 0;
+        }
+    }
+
 }

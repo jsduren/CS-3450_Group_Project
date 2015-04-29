@@ -12,14 +12,4 @@ public class HealthCollider : MonoBehaviour {
 	void Update () {
 	
 	}
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other == null) return;
-        if (other.GetComponentInParent<UnitController>() != null && other.GetComponentInParent<UnitController>().ThisUnit != null && GetComponentInParent<UnitController>().ThisUnit != null && GetComponentInParent<UnitController>().ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != GetComponentInParent<UnitController>().ThisUnit._CurTeam)
-        {
-            Debug.Log(string.Format("Triggered TakeDamage"));
-            GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
-        }
-    }
 }

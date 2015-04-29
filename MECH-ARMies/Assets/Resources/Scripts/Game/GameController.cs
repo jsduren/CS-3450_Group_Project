@@ -14,9 +14,12 @@ public class GameController : MonoBehaviour {
     public GameObject gunShot;
     public GameObject missileShot;
 
-    private int enemyTick = 1000;
+    private int enemyTick = 500;
     private GameObject infantryPrefab;
     private GameObject jeepPrefab;
+    private Vector3 Spawn;
+    Vector3 enemyBasePosition;
+    Quaternion enemyBaseRotation;
 	
     Vector3 shipspawn = new Vector3(105.0f, 34.4f, 105.0f);
 
@@ -50,6 +53,16 @@ public class GameController : MonoBehaviour {
         Player1Money = StartingMoney;
         Player2Money = StartingMoney;
 
+        if (GameObject.FindGameObjectWithTag("Player1Health") && GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>() != null)
+        {
+            GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>().maxValue = BaseStaticValues.Player.MaxLife;
+            GameObject.FindGameObjectWithTag("Player1Health").GetComponent<Slider>().value = BaseStaticValues.Player.MaxLife;
+        }
+
+        BaseStaticValues.Player1.Life = BaseStaticValues.Player.MaxLife;
+        BaseStaticValues.Player1.Energy = BaseStaticValues.Player.MaxEnergy;
+        BaseStaticValues.Player1.Guns = BaseStaticValues.Player.MaxGuns;
+
         GameObject jetGameObject = (GameObject)Resources.Load("LatestPrefabVersions/Jet");
         jetGameObject.GetComponent<UnitController>().curTeam = "Player1";
         jetGameObject.GetComponent<UnitController>().unitType = "PlayerPlane";
@@ -62,12 +75,20 @@ public class GameController : MonoBehaviour {
         //    Ship.GetComponent<UnitController>().unitType = "PlayerPlane";
         //    Ship.GetComponent<UnitController>().curProgram = "PlayerPlane";
         //}
-        infantryPrefab = (GameObject)Resources.Load("LatestPrefabVersions/Infantry");
+        infantryPrefab = (GameObject)Resources.Load("LatestPrefabVersions/Infantry2");
         infantryPrefab.GetComponent<UnitController>().curProgram = "Nearest Base";
         infantryPrefab.GetComponent<UnitController>().curTeam = "Player2";
-        jeepPrefab = (GameObject)Resources.Load("LatestPrefabVersions/Jeep");
+        jeepPrefab = (GameObject)Resources.Load("LatestPrefabVersions/Jeep2");
         jeepPrefab.GetComponent<UnitController>().curProgram = "Attack Main";
         jeepPrefab.GetComponent<UnitController>().curTeam = "Player2";
+
+        if (BaseStaticValues.MainBaseArray[1].gameObject)
+        {
+            Vector3 Spawn = new Vector3(BaseStaticValues.MainBaseArray[1].gameObject.transform.position.x - 30, BaseStaticValues.MainBaseArray[1].gameObject.transform.position.y, BaseStaticValues.MainBaseArray[1].gameObject.transform.position.z - 30);
+
+            enemyBasePosition = Spawn;
+            enemyBaseRotation = BaseStaticValues.MainBaseArray[1].gameObject.transform.rotation;
+        }
     }
 	
 	// Update is called once per frame
@@ -85,11 +106,14 @@ public class GameController : MonoBehaviour {
 	                {
 	                    gameOver = true;
 	                    GameOver("WIN!");
+                        Application.LoadLevel(2);
+
 	                }
 	                else
 	                {
 	                    gameOver = true;
-	                    GameOver("LOSE!");
+                        GameOver("LOSE!");
+                        Application.LoadLevel(3);
 	                }
 	            }
 	        }
@@ -110,28 +134,26 @@ public class GameController : MonoBehaviour {
     private void EnemyLoop()
     {
         enemyTick++;
-        if (enemyTick % 1000 == 0)
+        if (enemyTick % 500 == 0)
         {
-            if (enemyTick == 1000 * 2)
+            if (enemyTick == 500 * 2)
             {
                 Debug.Log("Spawn infantry");
 
                 //create infantry
-                var enemyBasePosition = BaseStaticValues.MainBaseArray[1].gameObject.transform.position;
-                var enemyBaseRotation = BaseStaticValues.MainBaseArray[1].gameObject.transform.rotation;
-
+                
                 for (var i = 0; i < 4; i++)
                 {
                     var newUnit = (GameObject)Instantiate(infantryPrefab, new Vector3(enemyBasePosition.x + Random.Range(-10, 10), enemyBasePosition.y, enemyBasePosition.z + Random.Range(-10, 10)), enemyBaseRotation);
                 }
             }
-            else if (enemyTick == 1000 * 5)
+            else if (enemyTick == 500 * 5)
             {
                 Debug.Log("Spawn jeep");
 
                 //create vehicles
-                var enemyBasePosition = BaseStaticValues.MainBaseArray[1].gameObject.transform.position;
-                var enemyBaseRotation = BaseStaticValues.MainBaseArray[1].gameObject.transform.rotation;
+                
+                
 
                 for (var i = 0; i < 4; i++)
                 {
@@ -142,7 +164,7 @@ public class GameController : MonoBehaviour {
 
                 enemyTick = 0;
             }
-            else if (enemyTick > 1000 * 5)
+            else if (enemyTick > 500 * 5)
                 enemyTick = 0;
         }
     }

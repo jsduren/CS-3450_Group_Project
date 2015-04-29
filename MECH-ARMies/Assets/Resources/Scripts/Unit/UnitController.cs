@@ -55,24 +55,22 @@ public class UnitController : MonoBehaviour {
         //Debug.Log(gameObject.transform);
         
         //! For updating the unit class when the curTeam is changed
-        if (curTeam != null && ThisUnit!= null && ThisUnit._CurTeam != null && curTeam != ThisUnit._CurTeam)
+        if (curTeam != null && ThisUnit._CurTeam != null && curTeam != ThisUnit._CurTeam)
 	    {
             curTeam = ThisUnit._CurTeam;
 	    }
 
-	    if (ThisUnit != null)
+	    
+	    ThisUnit.Death();
+
+	    if (Input.GetButtonDown("Change") && ThisUnit._CanTransform)
 	    {
-	        ThisUnit.Death();
+	        ThisUnit.SwitchPlayer(gameObject);
+	    }
 
-	        if (Input.GetButtonDown("Change"))
-	        {
-	            ThisUnit.SwitchPlayer(gameObject);
-	        }
-
-	        if (Input.GetButtonDown("CargoDrop"))
-            {
-	            ThisUnit.dropCargo();
-	        }
+	    if (Input.GetButtonDown("CargoDrop") && canDrop)
+	    {
+	        ThisUnit.dropCargo();
 	    }
 	}
 
@@ -181,14 +179,58 @@ public class UnitController : MonoBehaviour {
     }
 
 
-    void OnTriggerEnter(Collider other)
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.GetComponentInParent<UnitController>() != null && ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != ThisUnit._CurTeam)
+    //    {
+    //        Debug.Log(string.Format("Triggered TakeDamage"));
+    //        ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+    //    }
+    //}
+
+    void OnCollisionEnter(Collision other)
     {
-        if (other.GetComponentInParent<UnitController>() != null && ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != ThisUnit._CurTeam)
+
+        //Debug.Log(string.Format("On Collision Enter: Enter"));
+        //if (other != null && other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<UnitController>().ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam)
+        //{
+        //    Debug.Log(string.Format("Triggered TakeDamage: Enter"));
+        //    gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+        //}
+
+        if (other.gameObject.GetComponentInParent<UnitController>() != null &&
+            gameObject.GetComponentInParent<UnitController>().ThisUnit._IsShootable &&
+            (other.gameObject.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot ||
+             other.gameObject.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) &&
+            other.gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam !=
+            gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam)
         {
-            Debug.Log(string.Format("Triggered TakeDamage"));
-            ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+            Debug.Log(string.Format("Unit Controller Triggered TakeDamage: Enter"));
+            gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
         }
     }
+
+    //void OnCollisionStay(Collision other)
+    //{
+
+    //    Debug.Log(string.Format("On Collision Stay: Stay"));
+    //    //if (other != null && other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<UnitController>().ThisUnit._IsShootable && (other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot || other.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) && other.GetComponentInParent<UnitController>().ThisUnit._CurTeam != gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam)
+    //    //{
+    //    //    Debug.Log(string.Format("Triggered TakeDamage: Enter"));
+    //    //    gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+    //    //}
+
+    //    if (other.gameObject.GetComponentInParent<UnitController>() != null &&
+    //        gameObject.GetComponentInParent<UnitController>().ThisUnit._IsShootable &&
+    //        (other.gameObject.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Shot ||
+    //         other.gameObject.GetComponentInParent<UnitController>().ThisUnit._UnitType == UType.Missile) &&
+    //        other.gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam !=
+    //        gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTeam)
+    //    {
+    //        Debug.Log(string.Format("Triggered TakeDamage: Enter"));
+    //        gameObject.GetComponentInParent<UnitController>().ThisUnit.TakeDamage(other.gameObject.GetComponentInParent<UnitController>().ThisUnit._Damage, other.gameObject);
+    //    }
+    //}
 
     void OnTriggerStay(Collider other)
     {

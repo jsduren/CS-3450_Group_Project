@@ -23,28 +23,34 @@ public class LineOfSightCollider : MonoBehaviour {
         }
 	}
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider otherTarget)
     {
-        if (other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<UnitController>() != null)
+        if (otherTarget.GetComponentInParent<UnitController>() &&
+            GetComponentInParent<UnitController>() && otherTarget.GetComponentInParent<UnitController>().ThisUnit._CurTeam != GetComponentInParent<UnitController>().ThisUnit._CurTeam)
         {
-            gameObject.GetComponentInParent<UnitController>().possibleTarget = other.gameObject;
+            GetComponentInParent<UnitController>().possibleTarget = otherTarget.gameObject;
         }
     }
 
-    void OnTriggerStay(Collider other)
+    void OnTriggerStay(Collider otherTarget)
     {
-        if (other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<UnitController>() != null)
+        
+        if (otherTarget.GetComponentInParent<UnitController>() &&
+            GetComponentInParent<UnitController>() && otherTarget.GetComponentInParent<UnitController>().ThisUnit._CurTeam != GetComponentInParent<UnitController>().ThisUnit._CurTeam)
         {
-            gameObject.GetComponentInParent<UnitController>().possibleTarget = other.gameObject;
+            GetComponentInParent<UnitController>().possibleTarget = otherTarget.gameObject;
         }
     }
 
-    void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider otherTarget)
     {
-        if (other.GetComponentInParent<UnitController>() != null && gameObject.GetComponentInParent<UnitController>() != null && other.gameObject == gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTarget)
+        if (otherTarget.GetComponentInParent<UnitController>() &&
+            gameObject.GetComponentInParent<UnitController>() &&
+            otherTarget.gameObject == gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTarget)
         {
             gameObject.GetComponentInParent<UnitController>().possibleTarget = null;
             gameObject.GetComponentInParent<UnitController>().ThisUnit._CurTarget = null;
         }
+        
     }
 }
